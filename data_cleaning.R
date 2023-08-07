@@ -59,7 +59,7 @@ sim_res <- sim_res %>%
   mutate(issue = ifelse(issue == 44987, "2-3", 1))
 
 # Software: Draw multiple mentions apart
-sim_res %>% 
+sim_res <- sim_res %>% 
   tidyr::separate_wider_delim(cols = software_q18, 
                               delim = ", ",
                               names = c("software_1_q18", 
@@ -67,6 +67,9 @@ sim_res %>%
                                         "software_3_q18"),
                               too_few = "align_start") 
 
+# Seed: Fill in NAs with not found
+sim_res <- sim_res %>% 
+  mutate(seedprovided_q21 = tidyr::replace_na(seedprovided_q21, "not found"))
 
 
 # Reformat most cols to factor
@@ -83,7 +86,7 @@ saveRDS(sim_res_fac, file = here("data/sim_res_fac.RDS"))
 
 
 # Alternative: delete strings from some columns, convert these to numeric
-numeric_vars <- c("q2", "nconds_q6", "q7", "q8", "q11", "q14")
+numeric_vars <- c("nsimstudies_q2", "nconds_q6", "q7", "q8", "q11", "q14")
 
 # Remove everything but digits
 sim_res_num <- sim_res_fac %>% 
