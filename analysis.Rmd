@@ -1,0 +1,217 @@
+---
+title: "Preliminary analysis"
+author: "Samuel Pawel"
+date: "11 August 2023"
+output: pdf_document
+---
+
+
+```{r fig.align = "center", fig.height = 5, fig.width = 10}
+## data
+sim_res_fac <- readRDS(file = "data/sim_res_fac.RDS")
+sim_res_num <- readRDS(file = "data/sim_res_num.RDS")
+
+## libraries
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(ggpubr)
+theme_set(theme_bw() +
+          theme(legend.position = "top",
+                panel.grid.minor = element_blank()))
+
+## year
+ggplot(data = sim_res_fac, aes(x = factor(year))) +
+    geom_bar() +
+    labs(x = "Year")
+
+## journal
+ggplot(data = sim_res_fac, aes(x = journal)) +
+    geom_bar() +
+    labs(x = "Journal")
+
+## reviewer
+ggplot(data = sim_res_fac, aes(x = reviewer)) +
+    geom_bar() +
+    labs(x = "Reviewer")
+
+## Q2 number of simulation studies
+ggplot(data = sim_res_fac, aes(x = nsimstudies_q2, fill = journal)) +
+    geom_bar() +
+    labs(x = "Number of simulation studies in article", fill = "Journal")
+
+## Q3 are the aims of the study defined
+ggplot(data = sim_res_fac, aes(x = aimsdefined_q3, fill = journal)) +
+    geom_bar() +
+    labs(x = "Aims of the study defined?", fill = "Journal")
+
+## Q4 type of DGP
+ggplot(data = sim_res_fac, aes(x = dgptype_q4, fill = journal)) +
+    geom_bar() +
+    labs(x = "Type of DGP", fill = "Journal")
+
+## Q5 DGP parameters provided?
+ggplot(data = sim_res_fac, aes(x = dgpparameters_q5, fill = journal)) +
+    geom_bar() +
+    labs(x = "Are DGP parameters provided?", fill = "Journal")
+
+## Q6 How many conditions?
+summary(sim_res_num$nconds_q6)
+breaks <- c(1, 10, 100, 1000, 10000)
+ggplot(data = sim_res_num, aes(x = log(nconds_q6))) +
+    geom_histogram(breaks = seq(0, log(10000), 0.5), col = 1, alpha = 0.5) +
+    scale_x_continuous(breaks = log(breaks), labels = breaks) +
+    scale_y_continuous(breaks = seq(0, 10, 2)) +
+    labs(x = "How many simulation conditions?", fill = "Journal")
+
+## Q7 How many factors?
+sim_res_num %>%
+    mutate(factorsvaried_q7_fac = ifelse(is.na(factorsvaried_q7),
+                                         "unclear", factorsvaried_q7)) %>%
+    ggplot(aes(x = factorsvaried_q7_fac, fill = journal)) +
+    geom_bar() +
+    labs(x = "How many factors varied?", fill = "Journal")
+
+## Q7 Fully factorial?
+ggplot(data = sim_res_fac, aes(x = dgmfactorial_q7, fill = journal)) +
+    geom_bar() +
+    labs(x = "How are factors varied?", fill = "Journal")
+
+## Q8 How many repetitions?
+summary(sim_res_num$nsim_q8)
+breaks <- c(1, 10, 100, 1000, 10000, 100000, 1000000)
+ggplot(data = sim_res_num, aes(x = log(nsim_q8))) +
+    geom_histogram(breaks = seq(0, log(2000000), 0.5), col = 1, alpha = 0.5) +
+    labs(x = "How many repetitions?", fill = "Journal") +
+    scale_x_continuous(breaks = log(breaks), labels = breaks)
+
+## Q9 Are the number of repetitions justified?
+ggplot(data = sim_res_fac, aes(x = nsimjustified_q9, fill = journal)) +
+    geom_bar() +
+    labs(x = "Are the number of repetitions justified?", fill = "Journal")
+
+## Q10 Is the estimand stated?
+ggplot(data = sim_res_fac, aes(x = estimandstated_q10, fill = journal)) +
+    geom_bar() +
+    labs(x = "Is the estimand stated?", fill = "Journal")
+
+## Q11 How many estimands?
+summary(sim_res_num$nestimands_q11)
+breaks <- c(1, 3, 10, 30, 100, 300)
+ggplot(data = sim_res_num, aes(x = log(nestimands_q11))) +
+    geom_histogram(breaks = seq(0, log(500), 0.4), col = 1, alpha = 0.5) +
+    scale_x_continuous(breaks = log(breaks), labels = breaks) +
+    labs(x = "How many estimands?", fill = "Journal")
+
+## Q12 Are estimands aggregated?
+ggplot(data = sim_res_fac, aes(x = estimandsagg_q12, fill = journal)) +
+    geom_bar() +
+    labs(x = "Are estimands aggregated?", fill = "Journal")
+
+## Q13 How are the true parameters specified?
+ggplot(data = sim_res_fac, aes(x = truetheta_q13, fill = journal)) +
+    geom_bar() +
+    labs(x = "How are the true parameters specified?", fill = "Journal")
+
+## Q14 How many methods are included?
+summary(sim_res_num$nmethods_q14)
+# HACK there is one study with 192 methods, let's exclude it for a moment
+ggplot(data = sim_res_num, aes(x = nmethods_q14, fill = journal)) +
+    geom_bar() +
+    lims(x = c(0, 15)) +
+    labs(x = "How many methods are included?", fill = "Journal")
+
+## Q15 What is the evaluation target of the simulation?
+ggplot(data = sim_res_fac, aes(x = target_q15, fill = journal)) +
+    geom_bar() +
+    labs(x = "What is the evaluation target of the simulation?", fill = "Journal") +
+    coord_flip()
+
+## Q15 Which performance measures were used?
+sim_res_fac %>%
+    group_by(journal) %>%
+    summarise("Convergence" = sum(pmconvergence_q15 == "yes"),
+              "Bias" = sum(pmbias_q15 == "yes"),
+              "Empirical SE" = sum(pmempse_q15 == "yes"),
+              "(R)MSE" = sum(pm_r_mse_q15 == "yes"),
+              "Coverage" = sum(pmcover_q15 == "yes"),
+              "Type I error rate" = sum(pmtypeierror_q15 == "yes"),
+              "Power" = sum(pmpower_q15 == "yes"),
+              "CI width" = sum(pmciwidth_q15 == "yes"),
+              "Other" = sum(!is.na(pmother_q15))) %>%
+    gather(key = "PM", value = "count", "Convergence", "Bias", "Empirical SE",
+           "Coverage", "Type I error rate", "Power", "CI width", "Other") %>%
+    ggplot(aes(x = PM, y = count, fill = journal)) +
+    geom_bar(stat = "identity") +
+    labs(x = "Performance measure", fill = "Journal") +
+    coord_flip()
+
+## Q16 Is Monte Carlo uncertainty reported anywhere?
+ggplot(data = sim_res_fac, aes(x = mcerrors_q16, fill = journal)) +
+    geom_bar() +
+    labs(x = "Is Monte Carlo uncertainty reported anywhere?", fill = "Journal") +
+    coord_flip()
+
+## Q17 In which way are the results reported?
+sim_res_fac %>%
+    group_by(journal) %>%
+    summarise("Figure" = sum(resultsfigure_q17 == "yes"),
+              "Table" = sum(resultstable_q17 == "yes"),
+              "Text" = sum(resultstext_q17 == "yes"),
+              "Other" = sum(resultsother_q17 == "yes")) %>%
+    gather(key = "Type", value = "count", "Figure", "Table", "Text", "Other") %>%
+    ggplot(aes(x = Type, y = count, fill = journal)) +
+    geom_bar(stat = "identity") +
+    labs(x = "In which way are the results reported?", fill = "Journal")
+
+## Q18 Which software was used to conduct the simulation?
+## TODO add also information from software_2_q18 and software_3_q18
+ggplot(data = sim_res_fac, aes(x = software_1_q18, fill = journal)) +
+    geom_bar() +
+    labs(x = "Which primary software was used?", fill = "Journal") +
+    coord_flip()
+
+## Q19 Are there userwritten commands/packages/macros?
+ggplot(data = sim_res_fac, aes(x = userwritten_q19, fill = journal)) +
+    geom_bar() +
+    labs(x = "Are there userwritten commands/packages/macros?", fill = "Journal")
+
+## Q20 Is code provided?
+ggplot(data = sim_res_fac, aes(x = codeprovided_q20, fill = journal)) +
+    geom_bar() +
+    labs(x = "Is code provided?", fill = "Journal")
+
+## Q21 If code is provided, is a seed provided?
+ggplot(data = sim_res_fac, aes(x = seedprovided_q21, fill = journal)) +
+    geom_bar() +
+    labs(x = "If code is provided, is a seed provided?", fill = "Journal")
+
+## Q22 Is information on the computational environment provided?
+sim_res_fac %>%
+    mutate(compenvironment_q22 = factor(compenvironment_q22,
+                                        levels = c("no", "minimal", "partially", "fully"))) %>%
+    ggplot(aes(x = compenvironment_q22, fill = journal)) +
+    geom_bar() +
+    labs(x = "Is information on the computational environment provided?",
+         fill = "Journal")
+
+## Q23 Is information on the operating system provided?
+sim_res_fac %>%
+    mutate(compos_q23 = factor(compos_q23,
+                               levels = c("no", "partially", "fully"))) %>%
+    ggplot(aes(x = compos_q23, fill = journal)) +
+    geom_bar() +
+    labs(x = "Is information on the operating system provided?",
+         fill = "Journal")
+
+## Q24 How confident was reviewer in coding of the article?
+sim_res_fac %>%
+    mutate(coding_confidence = factor(coding_confidence,
+                               levels = c("poor", "medium", "great"))) %>%
+    ggplot(aes(x = coding_confidence, fill = journal)) +
+    geom_bar() +
+    labs(x = "How confident was reviewer in coding of the article?",
+         fill = "Journal")
+
+sessionInfo()
+```
