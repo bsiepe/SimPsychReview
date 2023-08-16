@@ -2,7 +2,10 @@
 title: "Preliminary analysis"
 author: "Samuel Pawel"
 date: "11 August 2023"
-output: pdf_document
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 
@@ -10,6 +13,13 @@ output: pdf_document
 ## data
 sim_res_fac <- readRDS(file = "data/sim_res_fac.RDS")
 sim_res_num <- readRDS(file = "data/sim_res_num.RDS")
+
+# subset assessment only
+sim_res_fac  <- sim_res_fac[sim_res_fac$simstudy_q1 == "yes",]
+sim_res_num  <- sim_res_num[sim_res_num$simstudy_q1 == "yes",]
+
+sim_res_fac  <- data.frame(sim_res_fac[sim_res_fac$coding_type == "assessment",])
+sim_res_num  <- data.frame(sim_res_num[sim_res_num$coding_type == "assessment",])
 
 ## libraries
 library(dplyr)

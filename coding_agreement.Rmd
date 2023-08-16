@@ -1,0 +1,66 @@
+---
+title: "Evaluation of coding agreement"
+author: "Frantisek Bartos"
+date: "15 August 2023"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+```{r fig.align = "center", fig.height = 5, fig.width = 10}
+## data
+sim_res_fac <- readRDS(file = "data/sim_res_fac.RDS")
+
+sim_res_fac  <- sim_res_fac[sim_res_fac$simstudy_q1 == "yes",]
+coding_orig  <- data.frame(sim_res_fac[sim_res_fac$coding_type == "assessment",])
+coding_test  <- data.frame(sim_res_fac[sim_res_fac$coding_type == "agreement",])
+
+agreement_matrix <- matrix(NA, ncol = ncol(coding_test), nrow = nrow(coding_test))
+rownames(agreement_matrix) <- coding_test$doi
+colnames(agreement_matrix) <- colnames(coding_test)
+agreement_matrix <- data.frame(agreement_matrix)
+
+# fix one DOI name issue
+coding_orig$doi[coding_orig$doi == "https://doi.org/10.1037/met0000386\r\n"] <- "https://doi.org/10.1037/met0000386"
+
+
+# assess agreement
+disagreements <- c()
+for(j in 1:ncol(agreement_matrix)){
+  for(i in 1:nrow(agreement_matrix)){
+    this_test <- coding_test[i,j]
+    this_orig <- coding_orig[coding_orig$doi == coding_test$doi[i],j]
+    
+    if(is.na(this_orig)){
+      this_orig <- "coded as NA"
+    }
+        if(is.na(this_test)){
+      this_test <- "coded as NA"
+    }
+    
+    if(this_test == this_orig){
+      agreement_matrix[i,j] <- TRUE
+    }else{
+      agreement_matrix[i,j] <- FALSE
+      disagreements <- c(disagreements, paste0(
+        colnames(coding_orig)[j], " in (", coding_test$doi[i], "): ", this_orig, " vs ", this_test
+      ))
+    }
+  }    
+}
+
+
+print(disagreements)
+
+```
+
+
+```{r fig.align = "center", fig.height = 15, fig.width = 10}
+
+par(mar = c(4, 10, 0, 0))
+barplot(apply(agreement_matrix, 2, mean), horiz = TRUE, las = 1, xlab = "Proportion agreement")
+
+
+sessionInfo()
+```

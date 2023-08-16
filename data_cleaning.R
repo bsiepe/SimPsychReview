@@ -44,11 +44,18 @@ all_res <- rbind(dat_fb, dat_bs, dat_sp)
 # Clean names
 all_res <- janitor::clean_names(all_res)
 
-# Only look at valid simulation studies
-sim_res <- all_res %>% 
-  filter(simstudy_q1 == "yes") %>% 
-  filter(x1 != "poor/medium") %>% 
-  filter(x1 != "Poor/Medium")
+# Add categorization
+sim_res <- all_res
+sim_res$coding_type <- sapply(1:nrow(sim_res), function(i){
+ if(sim_res$simstudy_q1[i] != "yes"){
+   return(NA)
+ }else if(tolower(sim_res$x1[i]) == "poor/medium"){
+   return("agreement")
+ }else{
+   return("assessment")
+ }
+})
+
 
 # Fix data structure -----------------------------------------------------
 # Dateofreview: proper conversion
