@@ -10,17 +10,6 @@ output:
 
 
 ```{r fig.align = "center", fig.height = 5, fig.width = 10}
-## data
-sim_res_fac <- readRDS(file = "data/sim_res_fac.RDS")
-sim_res_num <- readRDS(file = "data/sim_res_num.RDS")
-
-# subset assessment only
-sim_res_fac  <- sim_res_fac[sim_res_fac$simstudy_q1 == "yes",]
-sim_res_num  <- sim_res_num[sim_res_num$simstudy_q1 == "yes",]
-
-sim_res_fac  <- data.frame(sim_res_fac[sim_res_fac$coding_type == "assessment",])
-sim_res_num  <- data.frame(sim_res_num[sim_res_num$coding_type == "assessment",])
-
 ## libraries
 library(dplyr)
 library(tidyr)
@@ -29,6 +18,30 @@ library(ggpubr)
 theme_set(theme_bw() +
           theme(legend.position = "top",
                 panel.grid.minor = element_blank()))
+
+## data
+sim_res_fac_full <- readRDS(file = "data/sim_res_fac.RDS")
+sim_res_num_full <- readRDS(file = "data/sim_res_num.RDS")
+
+# subset assessment only
+sim_res_fac  <- sim_res_fac_full %>%
+    filter(simstudy_q1 == "yes",
+           coding_type == "assessment")
+sim_res_num  <- sim_res_num_full %>%
+    filter(simstudy_q1 == "yes",
+           coding_type == "assessment")
+
+## proportion of simulation studies by journal
+sim_res_fac_full %>%
+    group_by(journal) %>%
+    summarize(propSim = mean(simstudy_q1 == "yes"),
+              n = n()) %>%
+    mutate(journalLab = paste0(journal, " (n = ", n, ")")) %>%
+    ggplot(aes(x = journalLab, y = propSim)) +
+    geom_bar(stat = "identity") +
+    scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
+    labs(x = "Journal", y = "Proportion of simulation studies") +
+    theme(panel.grid.major.x = element_blank())
 
 ## year
 ggplot(data = sim_res_fac, aes(x = factor(year))) +
