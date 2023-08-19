@@ -16,6 +16,8 @@ library(tidyr)
 library(ggplot2)
 library(colorspace)
 library(ggpubr)
+library(stringr)
+library(forcats)
 theme_set(theme_bw() +
           theme(legend.position = "top",
                 panel.grid.minor = element_blank()))
@@ -180,25 +182,68 @@ ggplot(data = sim_res_fac, aes(x = target_q15, fill = journal)) +
     coord_flip()
 
 ## Q15 Which performance measures were used?
+# Spread "Other" apart
+# TODO add to the visualization after deciding on treatment of bias
+q15_other <- sim_res_fac %>% 
+  separate_wider_delim(pmother_q15, 
+                       delim = ",",
+                       names_sep = "_", 
+                       too_few = "align_start") %>% 
+  pivot_longer(cols = contains("pmother"),
+               names_to = NULL,
+               values_to = "pmother",
+               values_drop_na = TRUE) %>% 
+  select(pmother, journal) %>%
+  # remove whitespace
+  mutate(pmother = str_trim(pmother)) %>% 
+  mutate(pmother = str_replace(pmother, ".*correlation.*", "correlation")) %>%
+  mutate(pmother = str_replace(pmother, ".*standard deviation.*", "standard deviation")) %>%
+  mutate(pmother = as.factor(pmother)) %>% 
+  mutate(pmother = forcats::fct_lump_n(pmother, 3)) %>% 
+  group_by(journal) %>% 
+  count(pmother) %>% 
+  rename(PM = pmother,
+         count = n)
+
+# Visualize
 sim_res_fac %>%
-    group_by(journal) %>%
-    summarise("Convergence" = sum(pmconvergence_q15 == "yes"),
-              "Bias" = sum(pmbias_q15 == "yes"),
-              "Empirical SE" = sum(pmempse_q15 == "yes"),
-              "(R)MSE" = sum(pm_r_mse_q15 == "yes"),
-              "Coverage" = sum(pmcover_q15 == "yes"),
-              "Type I error rate" = sum(pmtypeierror_q15 == "yes"),
-              "Power" = sum(pmpower_q15 == "yes"),
-              "CI width" = sum(pmciwidth_q15 == "yes"),
-              "Other" = sum(!is.na(pmother_q15))) %>%
-    gather(key = "PM", value = "count", "Convergence", "Bias", "Empirical SE",
-           "Coverage", "Type I error rate", "Power", "CI width", "Other") %>%
-    ggplot(aes(x = PM, y = count, fill = journal)) +
-    geom_bar(stat = "identity") +
-    labs(x = "Performance measure", fill = "Journal") +
-    scale_fill_discrete_qualitative(palette = pal) + 
-    theme(panel.grid.major.y = element_blank()) +
-    coord_flip()
+  group_by(journal) %>%
+  summarise("Convergence" = sum(pmconvergence_q15 == "yes"),
+            "Bias" = sum(pmbias_q15 == "yes"),
+            "Empirical SE" = sum(pmempse_q15 == "yes"),
+            "(R)MSE" = sum(pm_r_mse_q15 == "yes"),
+            "Coverage" = sum(pmcover_q15 == "yes"),
+            "Type I error rate" = sum(pmtypeierror_q15 == "yes"),
+            "Power" = sum(pmpower_q15 == "yes"),
+            "CI width" = sum(pmciwidth_q15 == "yes"),
+            "Other" = sum(!is.na(pmother_q15))) %>%
+  gather(key = "PM", value = "count", "Convergence", "Bias", "(R)MSE", 
+         "Empirical SE", "Coverage", "Type I error rate", 
+         "Power", "CI width", "Other") %>%
+  bind_rows(q15_other) %>% 
+  mutate(PM = as.factor(PM)) %>% 
+  mutate(PM = reorder(PM, count, sum)) %>% 
+  ggplot(aes(x = PM, y = count, fill = journal)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Performance measure", fill = "Journal") +
+  scale_fill_discrete_qualitative(palette = pal) + 
+  theme(panel.grid.major.y = element_blank()) +
+  coord_flip()
+
+# Double check if absolute/relative bias ever occur with bias rated as "no"
+sim_res_fac %>% 
+  separate_wider_delim(pmother_q15, 
+                       delim = ",",
+                       names_sep = "_", 
+                       too_few = "align_start") %>% 
+  pivot_longer(cols = contains("pmother"),
+               names_to = NULL,
+               values_to = "pmother",
+               values_drop_na = TRUE) %>% 
+  mutate(pmother = str_trim(pmother)) %>% 
+  # mutate(pmother = str_replace(pmother, ".*bias.*", "bias")) %>% 
+  filter(grepl("bias", pmother)) %>% 
+  select(reviewer, pmbias_q15, pmother)
 
 ## Q16 Is Monte Carlo uncertainty reported anywhere?
 ggplot(data = sim_res_fac, aes(x = mcerrors_q16, fill = journal)) +
@@ -223,13 +268,28 @@ sim_res_fac %>%
     theme(panel.grid.major.x = element_blank())
 
 ## Q18 Which software was used to conduct the simulation?
-## TODO add also information from software_2_q18 and software_3_q18
 ggplot(data = sim_res_fac, aes(x = software_1_q18, fill = journal)) +
     geom_bar() +
     labs(x = "Which primary software was used?", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.y = element_blank()) +
     coord_flip()
+
+# add information from software_2_q18 and software_3_q18
+sim_res_fac %>% 
+  select(starts_with("software"), journal) %>% 
+  pivot_longer(cols = starts_with("software"),
+               names_to = NULL,
+               values_to = "software",
+               values_drop_na = TRUE) %>% 
+  mutate(software = as.factor(software)) %>% 
+  mutate(software = reorder(software, software, length)) %>% 
+  ggplot(aes(x = software, fill = journal)) +
+  geom_bar() +
+  labs(x = "Which software was used?", fill = "Journal") +
+  scale_fill_discrete_qualitative(palette = pal) + 
+  theme(panel.grid.major.y = element_blank()) +
+  coord_flip()
 
 ## Q19 Are there userwritten commands/packages/macros?
 ggplot(data = sim_res_fac, aes(x = userwritten_q19, fill = journal)) +
