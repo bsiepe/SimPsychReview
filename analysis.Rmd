@@ -1,6 +1,6 @@
 ---
 title: "Preliminary analysis"
-author: "Samuel Pawel"
+author: "Samuel Pawel, Björn Siepe, František Bartoš"
 date: "11 August 2023"
 output:
   pdf_document: default
@@ -21,7 +21,8 @@ library(forcats)
 theme_set(theme_bw() +
           theme(legend.position = "top",
                 panel.grid.minor = element_blank()))
-pal <- "Dark 2" # change palette here
+pal <- "Harmonic" # change palette here
+## colorspace::hcl_palettes("qualitative", plot = TRUE)
 
 ## data
 sim_res_fac_full <- readRDS(file = "data/sim_res_fac.RDS")
@@ -44,142 +45,162 @@ sim_res_fac_full %>%
     ggplot(aes(x = journalLab, y = propSim)) +
     geom_bar(stat = "identity") +
     scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
-    labs(x = "Journal", y = "Proportion of simulation studies") +
+    labs(x = NULL, title ="Journal", y = "Proportion of simulation studies") +
     theme(panel.grid.major.x = element_blank())
 
 ## year
 ggplot(data = sim_res_fac, aes(x = factor(year))) +
     geom_bar() +
-    labs(x = "Year") +
+    labs(x = NULL, title ="Year") +
     theme(panel.grid.major.x = element_blank())
 
 ## journal
 ggplot(data = sim_res_fac, aes(x = journal)) +
     geom_bar() +
-    labs(x = "Journal") +
+    labs(x = NULL, title ="Journal") +
     theme(panel.grid.major.x = element_blank())
 
 ## reviewer
 ggplot(data = sim_res_fac, aes(x = reviewer)) +
     geom_bar() +
-    labs(x = "Reviewer") +
+    labs(x = NULL, title ="Reviewer") +
     theme(panel.grid.major.x = element_blank())
 
 ## Q2 number of simulation studies
-ggplot(data = sim_res_fac, aes(x = nsimstudies_q2, fill = journal)) +
+q2 <- ggplot(data = sim_res_fac, aes(x = nsimstudies_q2, fill = journal)) +
     geom_bar() +
-    labs(x = "Number of simulation studies in article", fill = "Journal") +
+    labs(x = NULL, title ="Number of simulation studies in article", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.x = element_blank())
+q2
 
 ## Q3 are the aims of the study defined
-ggplot(data = sim_res_fac, aes(x = aimsdefined_q3, fill = journal)) +
+q3 <- sim_res_fac %>%
+    mutate(aimsdefined_q3 = factor(aimsdefined_q3,
+                                   levels = c("yes", "no", "unclear"))) %>%
+ggplot(aes(x = aimsdefined_q3, fill = journal)) +
     geom_bar() +
-    labs(x = "Aims of the study defined?", fill = "Journal") +
+    labs(x = NULL, title ="Aims of the study defined?", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.x = element_blank())
+q3
 
 ## Q4 type of DGP
-ggplot(data = sim_res_fac, aes(x = dgptype_q4, fill = journal)) +
+q4 <- ggplot(data = sim_res_fac, aes(x = dgptype_q4, fill = journal)) +
     geom_bar() +
-    labs(x = "Type of DGP", fill = "Journal") +
+    labs(x = NULL, title ="Type of DGP", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.x = element_blank())
 
 ## Q5 DGP parameters provided?
-ggplot(data = sim_res_fac, aes(x = dgpparameters_q5, fill = journal)) +
+q5 <- sim_res_fac %>%
+    mutate(dgpparameters_q5 = factor(dgpparameters_q5,
+                                   levels = c("yes", "no", "unclear"))) %>%
+ggplot(aes(x = dgpparameters_q5, fill = journal)) +
     geom_bar() +
-    labs(x = "Are DGP parameters provided?", fill = "Journal") +
+    labs(x = NULL, title ="Are DGP parameters provided?", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.x = element_blank())
+q5
 
 ## Q6 How many conditions?
 summary(sim_res_num$nconds_q6)
 breaks <- c(1, 10, 100, 1000, 10000)
-ggplot(data = sim_res_num, aes(x = log(nconds_q6))) +
+q6 <- ggplot(data = sim_res_num, aes(x = log(nconds_q6))) +
     geom_histogram(breaks = seq(0, log(10000), 0.5), col = 1, alpha = 0.5) +
     scale_x_continuous(breaks = log(breaks), labels = breaks) +
     scale_y_continuous(breaks = seq(0, 10, 2)) +
-    labs(x = "How many simulation conditions?", fill = "Journal")
+    labs(x = NULL, title ="How many simulation conditions?", fill = "Journal")
+q6
 
 ## Q7 How many factors?
-sim_res_num %>%
+q7a <- sim_res_num %>%
     mutate(factorsvaried_q7_fac = ifelse(is.na(factorsvaried_q7),
                                          "unclear", factorsvaried_q7)) %>%
     ggplot(aes(x = factorsvaried_q7_fac, fill = journal)) +
     geom_bar() +
-    labs(x = "How many factors varied?", fill = "Journal") +
+    labs(x = NULL, title ="How many factors varied?", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.x = element_blank())
+q7a
 
 ## Q7 Fully factorial?
-ggplot(data = sim_res_fac, aes(x = dgmfactorial_q7, fill = journal)) +
+q7b <- ggplot(data = sim_res_fac, aes(x = dgmfactorial_q7, fill = journal)) +
     geom_bar() +
-    labs(x = "How are factors varied?", fill = "Journal") +
+    labs(x = NULL, title ="How are factors varied?", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.x = element_blank())
+q7b
 
 ## Q8 How many repetitions?
 summary(sim_res_num$nsim_q8)
 breaks <- c(1, 10, 100, 1000, 10000, 100000, 1000000)
-ggplot(data = sim_res_num, aes(x = log(nsim_q8))) +
+q8 <- ggplot(data = sim_res_num, aes(x = log(nsim_q8))) +
     geom_histogram(breaks = seq(0, log(2000000), 0.5), col = 1, alpha = 0.5) +
-    labs(x = "How many repetitions?", fill = "Journal") +
+    labs(x = NULL, title ="How many repetitions?", fill = "Journal") +
     scale_x_continuous(breaks = log(breaks), labels = breaks)
+q8
 
 ## Q9 Are the number of repetitions justified?
-ggplot(data = sim_res_fac, aes(x = nsimjustified_q9, fill = journal)) +
+q9 <- ggplot(data = sim_res_fac, aes(x = nsimjustified_q9, fill = journal)) +
     geom_bar() +
-    labs(x = "Are the number of repetitions justified?", fill = "Journal") +
+    labs(x = NULL, title = "Are the number of repetitions justified?", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.x = element_blank())
+q9
 
 ## Q10 Is the estimand stated?
-ggplot(data = sim_res_fac, aes(x = estimandstated_q10, fill = journal)) +
+q10 <- ggplot(data = sim_res_fac, aes(x = estimandstated_q10, fill = journal)) +
     geom_bar() +
-    labs(x = "Is the estimand stated?", fill = "Journal") +
+    labs(x = NULL, title ="Is the estimand stated?", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.x = element_blank())
+q10
 
 ## Q11 How many estimands?
 summary(sim_res_num$nestimands_q11)
 breaks <- c(1, 3, 10, 30, 100, 300)
-ggplot(data = sim_res_num, aes(x = log(nestimands_q11))) +
+q11 <- ggplot(data = sim_res_num, aes(x = log(nestimands_q11))) +
     geom_histogram(breaks = seq(0, log(500), 0.4), col = 1, alpha = 0.5) +
     scale_x_continuous(breaks = log(breaks), labels = breaks) +
-    labs(x = "How many estimands?", fill = "Journal")
+    labs(x = NULL, title ="How many estimands?", fill = "Journal")
+q11
 
 ## Q12 Are estimands aggregated?
-ggplot(data = sim_res_fac, aes(x = estimandsagg_q12, fill = journal)) +
+q12 <- ggplot(data = sim_res_fac, aes(x = estimandsagg_q12, fill = journal)) +
     geom_bar() +
-    labs(x = "Are estimands aggregated?", fill = "Journal") +
+    labs(x = NULL, title ="Are estimands aggregated?", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.x = element_blank())
+q12
 
 ## Q13 How are the true parameters specified?
-ggplot(data = sim_res_fac, aes(x = truetheta_q13, fill = journal)) +
+q13 <- ggplot(data = sim_res_fac, aes(x = truetheta_q13, fill = journal)) +
     geom_bar() +
-    labs(x = "How are the true parameters specified?", fill = "Journal") +
+    labs(x = NULL, title ="How are the true parameters specified?", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.x = element_blank())
+q13
 
 ## Q14 How many methods are included?
 summary(sim_res_num$nmethods_q14)
 # HACK there is one study with 192 methods, let's exclude it for a moment
-ggplot(data = sim_res_num, aes(x = nmethods_q14, fill = journal)) +
+q14 <- ggplot(data = sim_res_num, aes(x = nmethods_q14, fill = journal)) +
     geom_bar() +
     scale_x_continuous(breaks = seq(0, 15), limits = c(0, 15)) +
-    labs(x = "How many methods are included?", fill = "Journal") +
+    labs(x = NULL, title ="How many methods are included?", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.x = element_blank())
+q14
 
 ## Q15 What is the evaluation target of the simulation?
-ggplot(data = sim_res_fac, aes(x = target_q15, fill = journal)) +
+q15a <- ggplot(data = sim_res_fac, aes(x = target_q15, fill = journal)) +
     geom_bar() +
-    labs(x = "What is the evaluation target of the simulation?", fill = "Journal") +
+    labs(x = NULL, title ="What is the evaluation target of the simulation?", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.y = element_blank()) +
     coord_flip()
+q15a
 
 ## Q15 Which performance measures were used?
 # Spread "Other" apart
@@ -206,29 +227,30 @@ q15_other <- sim_res_fac %>%
          count = n)
 
 # Visualize
-sim_res_fac %>%
-  group_by(journal) %>%
-  summarise("Convergence" = sum(pmconvergence_q15 == "yes"),
-            "Bias" = sum(pmbias_q15 == "yes"),
-            "Empirical SE" = sum(pmempse_q15 == "yes"),
-            "(R)MSE" = sum(pm_r_mse_q15 == "yes"),
-            "Coverage" = sum(pmcover_q15 == "yes"),
-            "Type I error rate" = sum(pmtypeierror_q15 == "yes"),
-            "Power" = sum(pmpower_q15 == "yes"),
-            "CI width" = sum(pmciwidth_q15 == "yes"),
-            "Other" = sum(!is.na(pmother_q15))) %>%
-  gather(key = "PM", value = "count", "Convergence", "Bias", "(R)MSE", 
-         "Empirical SE", "Coverage", "Type I error rate", 
-         "Power", "CI width", "Other") %>%
-  bind_rows(q15_other) %>% 
-  mutate(PM = as.factor(PM)) %>% 
-  mutate(PM = reorder(PM, count, sum)) %>% 
-  ggplot(aes(x = PM, y = count, fill = journal)) +
-  geom_bar(stat = "identity") +
-  labs(x = "Performance measure", fill = "Journal") +
-  scale_fill_discrete_qualitative(palette = pal) + 
-  theme(panel.grid.major.y = element_blank()) +
-  coord_flip()
+q15b <- sim_res_fac %>%
+    group_by(journal) %>%
+    summarise("Convergence" = sum(pmconvergence_q15 == "yes"),
+              "Bias" = sum(pmbias_q15 == "yes"),
+              "Empirical SE" = sum(pmempse_q15 == "yes"),
+              "(R)MSE" = sum(pm_r_mse_q15 == "yes"),
+              "Coverage" = sum(pmcover_q15 == "yes"),
+              "Type I error rate" = sum(pmtypeierror_q15 == "yes"),
+              "Power" = sum(pmpower_q15 == "yes"),
+              "CI width" = sum(pmciwidth_q15 == "yes"),
+              "Other" = sum(!is.na(pmother_q15))) %>%
+    gather(key = "PM", value = "count", "Convergence", "Bias", "(R)MSE", 
+           "Empirical SE", "Coverage", "Type I error rate", 
+           "Power", "CI width", "Other") %>%
+    bind_rows(q15_other) %>% 
+    mutate(PM = as.factor(PM)) %>% 
+    mutate(PM = reorder(PM, count, sum)) %>% 
+    ggplot(aes(x = PM, y = count, fill = journal)) +
+    geom_bar(stat = "identity") +
+    labs(x = NULL, title ="Performance measure", fill = "Journal") +
+    scale_fill_discrete_qualitative(palette = pal) + 
+    theme(panel.grid.major.y = element_blank()) +
+    coord_flip()
+q15b
 
 # Double check if absolute/relative bias ever occur with bias rated as "no"
 sim_res_fac %>% 
@@ -246,15 +268,16 @@ sim_res_fac %>%
   select(reviewer, pmbias_q15, pmother)
 
 ## Q16 Is Monte Carlo uncertainty reported anywhere?
-ggplot(data = sim_res_fac, aes(x = mcerrors_q16, fill = journal)) +
+q16 <- ggplot(data = sim_res_fac, aes(x = mcerrors_q16, fill = journal)) +
     geom_bar() +
-    labs(x = "Is Monte Carlo uncertainty reported anywhere?", fill = "Journal") +
+    labs(x = NULL, title ="Is Monte Carlo uncertainty reported anywhere?", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.y = element_blank()) +
     coord_flip()
+q16
 
 ## Q17 In which way are the results reported?
-sim_res_fac %>%
+q17 <- sim_res_fac %>%
     group_by(journal) %>%
     summarise("Figure" = sum(resultsfigure_q17 == "yes"),
               "Table" = sum(resultstable_q17 == "yes"),
@@ -263,20 +286,22 @@ sim_res_fac %>%
     gather(key = "Type", value = "count", "Figure", "Table", "Text", "Other") %>%
     ggplot(aes(x = Type, y = count, fill = journal)) +
     geom_bar(stat = "identity") +
-    labs(x = "In which way are the results reported?", fill = "Journal") +
+    labs(x = NULL, title ="In which way are the results reported?", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.x = element_blank())
+q17
 
 ## Q18 Which software was used to conduct the simulation?
-ggplot(data = sim_res_fac, aes(x = software_1_q18, fill = journal)) +
+q18a <- ggplot(data = sim_res_fac, aes(x = software_1_q18, fill = journal)) +
     geom_bar() +
-    labs(x = "Which primary software was used?", fill = "Journal") +
+    labs(x = NULL, title ="Which primary software was used?", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.y = element_blank()) +
     coord_flip()
+q18a
 
 # add information from software_2_q18 and software_3_q18
-sim_res_fac %>% 
+q18b <- sim_res_fac %>% 
   select(starts_with("software"), journal) %>% 
   pivot_longer(cols = starts_with("software"),
                names_to = NULL,
@@ -286,64 +311,90 @@ sim_res_fac %>%
   mutate(software = reorder(software, software, length)) %>% 
   ggplot(aes(x = software, fill = journal)) +
   geom_bar() +
-  labs(x = "Which software was used?", fill = "Journal") +
+  labs(x = NULL, title ="Which software was used?", fill = "Journal") +
   scale_fill_discrete_qualitative(palette = pal) + 
   theme(panel.grid.major.y = element_blank()) +
   coord_flip()
+q18b
 
 ## Q19 Are there userwritten commands/packages/macros?
-ggplot(data = sim_res_fac, aes(x = userwritten_q19, fill = journal)) +
+q19 <- ggplot(data = sim_res_fac, aes(x = userwritten_q19, fill = journal)) +
     geom_bar() +
-    labs(x = "Are there userwritten commands/packages/macros?", fill = "Journal") +
+    labs(x = NULL, title ="Are there userwritten commands/packages/macros?", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.x = element_blank())
+q19
 
 ## Q20 Is code provided?
-ggplot(data = sim_res_fac, aes(x = codeprovided_q20, fill = journal)) +
+q20 <- ggplot(data = sim_res_fac, aes(x = codeprovided_q20, fill = journal)) +
     geom_bar() +
-    labs(x = "Is code provided?", fill = "Journal") +
+    labs(x = NULL, title ="Is code provided?", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.x = element_blank())
+q20
 
 ## Q21 If code is provided, is a seed provided?
-ggplot(data = sim_res_fac, aes(x = seedprovided_q21, fill = journal)) +
+q21 <- ggplot(data = sim_res_fac, aes(x = seedprovided_q21, fill = journal)) +
     geom_bar() +
-    labs(x = "If code is provided, is a seed provided?", fill = "Journal") +
+    labs(x = NULL, title ="If code is provided, is a seed provided?", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.x = element_blank())
+q21
 
 ## Q22 Is information on the computational environment provided?
-sim_res_fac %>%
+q22 <- sim_res_fac %>%
     mutate(compenvironment_q22 = factor(compenvironment_q22,
                                         levels = c("no", "minimal", "partially", "fully"))) %>%
     ggplot(aes(x = compenvironment_q22, fill = journal)) +
     geom_bar() +
-    labs(x = "Is information on the computational environment provided?",
+    labs(x = NULL, title ="Is information on the computational environment provided?",
          fill = "Journal")  +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.x = element_blank())
+q22
 
 ## Q23 Is information on the operating system provided?
-sim_res_fac %>%
+q23 <- sim_res_fac %>%
     mutate(compos_q23 = factor(compos_q23,
                                levels = c("no", "partially", "fully"))) %>%
     ggplot(aes(x = compos_q23, fill = journal)) +
     geom_bar() +
-    labs(x = "Is information on the operating system provided?",
+    labs(x = NULL, title ="Is information on the operating system provided?",
          fill = "Journal")  +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.x = element_blank())
+q23
 
 ## Q24 How confident was reviewer in coding of the article?
-sim_res_fac %>%
+q24 <- sim_res_fac %>%
     mutate(coding_confidence = factor(coding_confidence,
                                levels = c("poor", "medium", "great"))) %>%
     ggplot(aes(x = coding_confidence, fill = journal)) +
     geom_bar() +
-    labs(x = "How confident was reviewer in coding of the article?",
+    labs(x = NULL, title ="How confident was reviewer in coding of the article?",
          fill = "Journal")  +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.x = element_blank())
+q24
+```
 
+
+
+```{r fig.height = 7, fig.width = 10.5}
+## composite plot 1 - problematic questions
+ggpubr::ggarrange(q9, q16, q20, q22, ncol = 2, nrow = 2, common.legend = TRUE)
+```
+
+
+
+```{r fig.height = 12, fig.width = 18}
+## composite plot 2 - descriptives
+ggpubr::ggarrange(q2, q4, q6, q7a, q7b, q8, q11, q14, q15a, q15b, q17, q18b,
+                  ncol = 3, nrow = 4, common.legend = TRUE)
+```
+
+
+
+```{r}
 sessionInfo()
 ```
