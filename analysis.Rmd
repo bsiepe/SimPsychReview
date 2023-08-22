@@ -90,11 +90,15 @@ ggplot(aes(x = aimsdefined_q3, fill = journal)) +
 q3
 
 ## Q4 type of DGP
-q4 <- ggplot(data = sim_res_fac, aes(x = dgptype_q4, fill = journal)) +
+q4 <- sim_res_fac %>% 
+    mutate(dgptype_q4 = as.factor(dgptype_q4)) %>% 
+    mutate(dgptype_q4 = reorder(dgptype_q4, dgptype_q4, length, decreasing = TRUE)) %>% 
+    ggplot(aes(x = dgptype_q4, fill = journal)) +
     geom_bar() +
     labs(x = NULL, title ="Type of DGP", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.x = element_blank())
+q4
 
 ## Q5 DGP parameters provided?
 q5 <- sim_res_fac %>%
@@ -198,7 +202,10 @@ q14 <- ggplot(data = sim_res_num, aes(x = nmethods_q14, fill = journal)) +
 q14
 
 ## Q15 What is the evaluation target of the simulation?
-q15a <- ggplot(data = sim_res_fac, aes(x = target_q15, fill = journal)) +
+q15a <- sim_res_fac %>% 
+    mutate(target_q15 = as.factor(target_q15)) %>% 
+    mutate(target_q15 = reorder(target_q15, target_q15, length)) %>% 
+    ggplot(aes(x = target_q15, fill = journal)) +
     geom_bar() +
     labs(x = NULL, title ="What is the evaluation target of the simulation?", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
@@ -272,7 +279,10 @@ sim_res_fac %>%
   select(reviewer, pmbias_q15, pmother)
 
 ## Q16 Is Monte Carlo uncertainty reported anywhere?
-q16 <- ggplot(data = sim_res_fac, aes(x = mcerrors_q16, fill = journal)) +
+q16 <- sim_res_fac %>% 
+  mutate(mcerrors_q16 = as.factor(mcerrors_q16)) %>% 
+  mutate(mcerrors_q16 = reorder(mcerrors_q16, mcerrors_q16, length)) %>% 
+  ggplot(aes(x = mcerrors_q16, fill = journal)) +
     geom_bar() +
     labs(x = NULL, title ="Is Monte Carlo uncertainty reported anywhere?", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
@@ -288,6 +298,8 @@ q17 <- sim_res_fac %>%
               "Text" = sum(resultstext_q17 == "yes"),
               "Other" = sum(resultsother_q17 == "yes")) %>%
     gather(key = "Type", value = "count", "Figure", "Table", "Text", "Other") %>%
+    mutate(Type = as.factor(Type)) %>% 
+    mutate(Type = reorder(Type, count, sum, decreasing = TRUE)) %>% 
     ggplot(aes(x = Type, y = count, fill = journal)) +
     geom_bar(stat = "identity") +
     labs(x = NULL, title ="In which way are the results reported?", fill = "Journal") +
@@ -330,7 +342,12 @@ q19 <- ggplot(data = sim_res_fac, aes(x = userwritten_q19, fill = journal)) +
 q19
 
 ## Q20 Is code provided?
-q20 <- ggplot(data = sim_res_fac, aes(x = codeprovided_q20, fill = journal)) +
+# Reordered this such that negative is on the left to stay consistent
+q20 <- sim_res_fac %>% 
+    mutate(codeprovided_q20 = as.factor(codeprovided_q20)) %>% 
+    mutate(codeprovided_q20 = reorder(codeprovided_q20, codeprovided_q20, 
+                                      length, decreasing = TRUE)) %>% 
+    ggplot(aes(x = codeprovided_q20, fill = journal)) +
     geom_bar() +
     labs(x = NULL, title ="Is code provided?", fill = "Journal") +
     scale_fill_discrete_qualitative(palette = pal) + 
