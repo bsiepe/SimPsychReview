@@ -4,11 +4,11 @@ author: "Samuel Pawel, Björn Siepe, František Bartoš"
 date: "11 August 2023"
 output:
   pdf_document: default
-  html_document:
-    df_print: paged
+  # html_document:
+  #   df_print: paged
 ---
 
-
+# Visualizations
 ```{r fig.align = "center", fig.height = 5, fig.width = 10}
 ## libraries
 library(dplyr)
@@ -18,6 +18,10 @@ library(colorspace)
 library(ggpubr)
 library(stringr)
 library(forcats)
+library(knitr)
+library(kableExtra)
+# devtools::install_github("kupietz/kableExtra")
+
 theme_set(theme_bw() +
           theme(legend.position = "top",
                 panel.grid.minor = element_blank()))
@@ -392,6 +396,91 @@ ggpubr::ggarrange(q9, q16, q20, q22, ncol = 2, nrow = 2, common.legend = TRUE,
 ## composite plot 2 - descriptives
 ggpubr::ggarrange(q2, q4, q6, q7a, q7b, q8, q11, q14, q15a, q15b, q17, q18b,
                   ncol = 3, nrow = 4, common.legend = TRUE, align = "h")
+```
+
+# Descriptives
+The following still needs some cleaning.
+```{r}
+# detailed per-journal descriptives
+journal_describe <- sim_res_fac %>% 
+  split(.$journal) %>% 
+  purrr::map(~Hmisc::describe(.x))
+
+
+# In a tidy way for long summary table
+summary_vars <- c(
+  "reviewer", "simstudy_q1",
+  "nsimstudies_q2", "whichsim", "aimsdefined_q3",
+  "dgptype_q4", 
+  # "dgpparameters_q5", 
+  # "nconds_q6", 
+  "factorsvaried_q7", "dgmfactorial_q7", 
+  # "nsim_q8", 
+  "nsimjustified_q9",
+  "estimandstated_q10", 
+  # "nestimands_q11",
+  "estimandsagg_q12", "truetheta_q13", 
+  # "nmethods_q14", 
+  "target_q15",
+  "pmconvergence_q15", "pmbias_q15", "pmempse_q15", "pm_r_mse_q15",
+  "pmcover_q15", "pmtypeierror_q15", "pmpower_q15", "pmciwidth_q15",
+  "pmsclear_q15", "mcerrors_q16",
+  "resultsfigure_q17", "resultstable_q17", "resultstext_q17",
+  "resultsother_q17", "software_1_q18", "software_2_q18",
+  "software_3_q18", "software", "userwritten_q19", 
+  "codeprovided_q20",  "seedprovided_q21",
+  "compenvironment_q22", "compos_q23", 
+  "coding_confidence"
+)
+
+
+sim_res_fac %>% 
+  as.data.frame() %>% 
+  group_by(journal) %>% 
+  pivot_longer(cols = starts_with("software"),
+               names_to = NULL,
+               values_to = "software",
+               values_drop_na = TRUE) %>% 
+  mutate(software = as.factor(software)) %>% 
+  pivot_longer(cols = any_of(summary_vars),
+               names_to = "col", values_to = "response") %>% 
+  select(journal, col, response) %>% 
+  group_by(journal, col) %>% 
+  count(response) %>% 
+  # filter(!is.na(response)) %>% 
+  # View()
+  pivot_wider(id_cols = c(col, response),
+              names_from = journal, 
+              values_from = n,
+              values_fill = 0) %>% 
+  arrange(factor(col, levels = summary_vars)) %>%
+  rowwise() %>% 
+  mutate(Sum = sum(BRM, MBRM, PM)) %>% 
+  knitr::kable("latex", longtable = TRUE, caption = "Grouped by Journal") %>% 
+  kableExtra::column_spec(1, bold = TRUE) %>% 
+  kableExtra::collapse_rows(columns = 1:2, valign = "top")
+
+
+# Ungrouped and with proportions
+sim_res_fac %>% 
+  as.data.frame() %>% 
+  pivot_longer(cols = starts_with("software"),
+               names_to = NULL,
+               values_to = "software",
+               values_drop_na = TRUE) %>% 
+  mutate(software = as.factor(software)) %>% 
+  pivot_longer(cols = any_of(summary_vars),
+               names_to = "col", values_to = "response") %>% 
+  select(col, response) %>% 
+  group_by(col) %>% 
+  count(response) %>% 
+  arrange(factor(col, levels = summary_vars)) %>%
+  knitr::kable("latex", longtable = TRUE, caption = "Ungrouped") %>% 
+  kableExtra::column_spec(1, bold = TRUE) %>% 
+  kableExtra::collapse_rows(columns = 1:2, valign = "top")
+
+
+  
 ```
 
 
