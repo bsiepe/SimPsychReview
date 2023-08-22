@@ -382,7 +382,8 @@ q24
 
 ```{r fig.height = 7, fig.width = 10.5}
 ## composite plot 1 - problematic questions
-ggpubr::ggarrange(q9, q16, q20, q22, ncol = 2, nrow = 2, common.legend = TRUE)
+ggpubr::ggarrange(q9, q16, q20, q22, ncol = 2, nrow = 2, common.legend = TRUE,
+                  align = "h")
 ```
 
 
@@ -390,7 +391,7 @@ ggpubr::ggarrange(q9, q16, q20, q22, ncol = 2, nrow = 2, common.legend = TRUE)
 ```{r fig.height = 12, fig.width = 18}
 ## composite plot 2 - descriptives
 ggpubr::ggarrange(q2, q4, q6, q7a, q7b, q8, q11, q14, q15a, q15b, q17, q18b,
-                  ncol = 3, nrow = 4, common.legend = TRUE)
+                  ncol = 3, nrow = 4, common.legend = TRUE, align = "h")
 ```
 
 
