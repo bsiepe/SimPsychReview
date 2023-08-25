@@ -42,6 +42,7 @@ sim_res_num  <- sim_res_num_full %>%
 
 ## proportion of simulation studies by journal
 sim_res_fac_full %>%
+    filter(coding_type == "assessment" | is.na(coding_type)) %>%
     group_by(journal) %>%
     summarize(propSim = mean(simstudy_q1 == "yes"),
               n = n()) %>%
@@ -51,6 +52,23 @@ sim_res_fac_full %>%
     scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
     labs(x = NULL, title ="Journal", y = "Proportion of simulation studies") +
     theme(panel.grid.major.x = element_blank())
+
+sim_res_fac_full %>%
+    filter(coding_type == "assessment" | is.na(coding_type),
+           year == 2022) %>%
+    summarize(propSim = mean(simstudy_q1 == "yes"),
+              sim = sum(simstudy_q1 == "yes"),
+              n = n())
+sim_res_fac_full %>%
+    filter(coding_type == "assessment" | is.na(coding_type),
+           year == 2022) %>%
+    group_by(journal) %>%
+    summarize(propSim = mean(simstudy_q1 == "yes"),
+              sim = sum(simstudy_q1 == "yes"),
+              n = n())
+## Morris et al. (2019) find
+## "264 articles of which 199 (75\%) included at least one simulation study"
+
 
 ## year
 ggplot(data = sim_res_fac, aes(x = factor(year))) +
@@ -99,6 +117,13 @@ q4 <- sim_res_fac %>%
     scale_fill_discrete_qualitative(palette = pal) + 
     theme(panel.grid.major.x = element_blank())
 q4
+
+## from Morris: "97 simulation studies used some form of parametric model to
+## generate data while three used resampling methods. Of the 97 that simulated
+## from a parametric model, 27 based parameter values on data, one based
+## parameter values partly on data, and the remaining 69 on no data. Of these
+## 97, 91 (94\%) provided the parameters used." (p. 2079)
+
 
 ## Q5 DGP parameters provided?
 q5 <- sim_res_fac %>%
