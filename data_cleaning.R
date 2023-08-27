@@ -61,10 +61,23 @@ sim_res$coding_type <- sapply(1:nrow(sim_res), function(i){
 # Dateofreview: proper conversion
 sim_res$dateofreview <- as.Date(sim_res$dateofreview)
 
+# Journal: It is called MBR, not MBRM
+sim_res$journal <- gsub("MBRM", "MBR", sim_res$journal)
+
 # Issue: Excel converted "2-3" to 44987
 sim_res <- sim_res %>% 
   mutate(issue = as.character(issue)) %>% 
   mutate(issue = ifelse(issue == 44987, "2-3", 1))
+
+# Factors varied: recode 0 to 1 after discussion for consistency
+# also, treat these as fully-factorial and not one-at-a-time
+sim_res <- sim_res %>% 
+  mutate(dgmfactorial_q7 = ifelse(factorsvaried_q7 == 0,
+                                  "fully-factorial", dgmfactorial_q7)) %>% 
+  mutate(factorsvaried_q7 = ifelse(factorsvaried_q7 == 0, 
+                                 1, factorsvaried_q7))
+
+
 
 # Software: Draw multiple mentions apart
 sim_res <- sim_res %>% 
