@@ -22,6 +22,8 @@ library(stringr)
 library(forcats)
 library(knitr)
 library(kableExtra)
+library(sysfonts)
+library(showtext)
 # devtools::install_github("kupietz/kableExtra")
 
 theme_set(theme_bw() +
