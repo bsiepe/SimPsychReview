@@ -67,7 +67,7 @@ sim_res$journal <- gsub("MBRM", "MBR", sim_res$journal)
 # Issue: Excel converted "2-3" to 44987
 sim_res <- sim_res %>% 
   mutate(issue = as.character(issue)) %>% 
-  mutate(issue = ifelse(issue == 44987, "2-3", 1))
+  mutate(issue = ifelse(issue == 44987, "2-3", issue))
 
 # Factors varied: recode 0 to 1 after discussion for consistency
 # also, treat these as fully-factorial and not one-at-a-time
