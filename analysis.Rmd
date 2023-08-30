@@ -668,6 +668,40 @@ Analyses of individual questions:
 sim_res_num$nsim_q8 %>% 
   table()
 
+
+# Q15a:
+sim_res_fac %>% 
+    separate_wider_delim(target_q15, 
+                       delim = ",",
+                       names_sep = "_", 
+                       too_few = "align_start") %>% 
+    pivot_longer(cols = contains("target"),
+               names_to = NULL,
+               values_to = "target",
+               values_drop_na = TRUE) %>% 
+    mutate(target = str_trim(target)) %>% 
+    mutate(target = as.factor(target)) %>% 
+    count(target) %>% 
+    arrange(desc(n))
+
+# Q15:
+sim_res_fac %>%
+    group_by(journal) %>%
+    summarise("Convergence" = sum(pmconvergence_q15 == "yes"),
+              "Bias" = sum(pmbias_q15 == "yes"),
+              "Empirical SE" = sum(pmempse_q15 == "yes"),
+              "(R)MSE" = sum(pm_r_mse_q15 == "yes"),
+              "Coverage" = sum(pmcover_q15 == "yes"),
+              "Type I error rate" = sum(pmtypeierror_q15 == "yes"),
+              "Power" = sum(pmpower_q15 == "yes"),
+              "CI width" = sum(pmciwidth_q15 == "yes"),
+              "Other" = sum(!is.na(pmother_q15))) %>%
+    gather(key = "PM", value = "count", "Convergence", "Bias", "(R)MSE", 
+           "Empirical SE", "Coverage", "Type I error rate", 
+           "Power", "CI width", "Other") %>%
+    bind_rows(q15_other) %>% group_by(PM) %>% summarize(sum = sum(count)) %>% arrange(desc(sum))
+
+
 ```
 
 
