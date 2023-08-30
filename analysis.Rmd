@@ -317,7 +317,7 @@ q15a_new <- sim_res_fac %>%
     labs(x = NULL, title ="What is the evaluation target of the simulation?", 
          fill = "Journal", caption = "Double entries combined") +
     scale_fill_manual(values = cols) + 
-    scale_y_continuous(limits = c(0, q15_plot_max), expand = c(0,0))+
+    scale_y_continuous(limits = c(0, q15_plot_max + 10), expand = c(0,0))+
     theme(panel.grid.major.y = element_blank()) +
     coord_flip()
 
@@ -571,7 +571,10 @@ plotList <- lapply(X = list(q2, q4, q6, q7a, q7b, q8, q14,
                    ## this plot requires a different title size
                    FUN = function(plot) {
                      plot +
-                       theme(plot.title = element_text(size = rel(1.6)))
+                       theme(plot.title = element_text(size = rel(1.6)),
+                             legend.title = element_text(size = rel(1.6)),
+                             legend.text = element_text(size = rel(1.6)),
+                             legend.spacing = unit(1.5, "cm")) 
                    })
 ggpubr::ggarrange(plotlist = plotList,
                   ncol = 3, nrow = 4, common.legend = TRUE, align = "h")
