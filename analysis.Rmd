@@ -431,6 +431,8 @@ q17 <- sim_res_fac %>%
               "Text" = sum(resultstext_q17 == "yes"),
               "Other" = sum(resultsother_q17 == "yes")) %>%
     gather(key = "Type", value = "count", "Figure", "Table", "Text", "Other") %>%
+    # omit "Other" category for plot
+    filter(Type != "Other") %>% 
     mutate(Type = as.factor(Type)) %>% 
     mutate(Type = reorder(Type, count, sum, decreasing = TRUE)) %>% 
     ggplot(aes(x = Type, y = count, fill = journal)) +
