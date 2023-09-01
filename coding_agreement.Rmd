@@ -97,7 +97,7 @@ barplot(apply(agreement_matrix, 2, mean), horiz = TRUE, las = 1, xlab = "Proport
 
 
 Figure for the paper:
-```{r fig.align = "center", fig.height = 8*1.5, fig.width = 5*1.5}
+```{r fig.align = "center", fig.height = 8, fig.width = 5*1.5}
 theme_bs <- function(){
   # add google font
   sysfonts::font_add_google("News Cycle", "news")
