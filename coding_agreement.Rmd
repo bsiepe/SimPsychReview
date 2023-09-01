@@ -97,7 +97,7 @@ barplot(apply(agreement_matrix, 2, mean), horiz = TRUE, las = 1, xlab = "Proport
 
 
 Figure for the paper:
-```{r fig.align = "center", fig.height = 8, fig.width = 5}
+```{r fig.align = "center", fig.height = 8*1.5, fig.width = 5*1.5}
 theme_bs <- function(){
   # add google font
   sysfonts::font_add_google("News Cycle", "news")
@@ -132,9 +132,11 @@ agreement_matrix %>%
   mutate(Question = factor(Question, levels = Question)) %>%
   mutate(Question = forcats::fct_rev(Question)) %>% 
   ggplot(aes(x = Agreement, y = Question))+
-  geom_bar(stat = "identity") +
-  scale_fill_gradient(high = "darkblue", low = "red") +
-  scale_x_continuous(limits = c(0,1), expand = c(0,0))
+    geom_bar(stat = "identity", alpha = 0.8, fill = "#08519c") +
+    scale_fill_gradient(high = "darkblue", low = "red") +
+    scale_x_continuous(limits = c(0, 1), expand = c(0.01, 0.01), labels = scales::percent) +
+    theme(panel.grid.minor = element_blank(),
+          panel.grid.major.y = element_blank())
 
 ```
 
