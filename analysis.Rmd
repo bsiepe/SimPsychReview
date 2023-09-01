@@ -357,11 +357,10 @@ q15b <- sim_res_fac %>%
               "Coverage" = sum(pmcover_q15 == "yes"),
               "Type I error rate" = sum(pmtypeierror_q15 == "yes"),
               "Power" = sum(pmpower_q15 == "yes"),
-              "CI width" = sum(pmciwidth_q15 == "yes"),
-              "Other" = sum(!is.na(pmother_q15))) %>%
+              "CI width" = sum(pmciwidth_q15 == "yes")) %>%
     gather(key = "PM", value = "count", "Convergence", "Bias", "(R)MSE", 
            "Empirical SE", "Coverage", "Type I error rate", 
-           "Power", "CI width", "Other") %>%
+           "Power", "CI width") %>%
     bind_rows(q15_other) %>% 
     mutate(PM = as.factor(PM)) %>% 
     mutate(PM = reorder(PM, count, sum)) %>% 
