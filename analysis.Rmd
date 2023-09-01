@@ -556,15 +556,15 @@ q24
 
 
 
-```{r fig.height = 7, fig.width = 10.5, warning=FALSE}
+```{r "fig1", fig.height = 7, fig.width = 10.5, warning=FALSE}
 ## composite plot 1 - problematic questions
-ggpubr::ggarrange(q9, q16, q20, q22, ncol = 2, nrow = 2, common.legend = TRUE,
-                  align = "h")
+ggpubr::ggarrange(q9, q16, q20, q22, labels = LETTERS[1:4], ncol = 2, nrow = 2,
+                  common.legend = TRUE, align = "h")
 ```
 
 
 
-```{r fig.height = 15, fig.width = 18, warning=FALSE}
+```{r "fig2", fig.height = 15, fig.width = 18, warning=FALSE}
 ## composite plot 2 - descriptives
 plotList <- lapply(X = list(q2, q4, q6, q7a, q7b, q8, q14, 
                             q15a_new, q11, q15b, q17, q18b),
@@ -576,7 +576,8 @@ plotList <- lapply(X = list(q2, q4, q6, q7a, q7b, q8, q14,
                              legend.text = element_text(size = rel(1.6)),
                              legend.spacing = unit(1.5, "cm")) 
                    })
-ggpubr::ggarrange(plotlist = plotList,
+names <- LETTERS[1:length(plotList)]
+ggpubr::ggarrange(plotlist = plotList, labels = names,
                   ncol = 3, nrow = 4, common.legend = TRUE, align = "h")
 ```
 
