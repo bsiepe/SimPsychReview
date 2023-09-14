@@ -74,7 +74,7 @@ sim_res_num  <- sim_res_num_full %>%
 sim_res_fac_full %>%
     filter(coding_type == "assessment" | is.na(coding_type)) %>%
     group_by(journal) %>%
-    summarize(propSim = mean(simstudy_q1 == "yes"),
+    dplyr::summarize(propSim = mean(simstudy_q1 == "yes"),
               n = n()) %>%
     mutate(journalLab = paste0(journal, " (n = ", n, ")")) %>%
     ggplot(aes(x = journalLab, y = propSim)) +
@@ -86,14 +86,14 @@ sim_res_fac_full %>%
 sim_res_fac_full %>%
     filter(coding_type == "assessment" | is.na(coding_type),
            year == 2022) %>%
-    summarize(propSim = mean(simstudy_q1 == "yes"),
+    dplyr::summarize(propSim = mean(simstudy_q1 == "yes"),
               sim = sum(simstudy_q1 == "yes"),
               n = n())
 sim_res_fac_full %>%
     filter(coding_type == "assessment" | is.na(coding_type),
            year == 2022) %>%
     group_by(journal) %>%
-    summarize(propSim = mean(simstudy_q1 == "yes"),
+    dplyr::summarize(propSim = mean(simstudy_q1 == "yes"),
               sim = sum(simstudy_q1 == "yes"),
               n = n())
 ## Morris et al. (2019) find
@@ -379,8 +379,8 @@ q15b <- sim_res_fac %>%
          fill = "Journal",
          caption = "Abs. and rel. Bias counted towards Bias") +
     scale_fill_manual(values = cols) + 
-    scale_y_continuous(limits = c(0,130), expand = c(0,0),
-                       breaks = c(20, 40, 60, 80, 100, 120))+
+    scale_y_continuous(limits = c(0,70), expand = c(0,0),
+                       breaks = c(20, 40, 60))+
     theme(panel.grid.major.y = element_blank()) +
     coord_flip()
 q15b
@@ -718,7 +718,10 @@ sim_res_fac %>%
     gather(key = "PM", value = "count", "Convergence", "Bias", "(R)MSE", 
            "Empirical SE", "Coverage", "Type I error rate", 
            "Power", "CI width", "Other") %>%
-    bind_rows(q15_other) %>% group_by(PM) %>% summarize(sum = sum(count)) %>% arrange(desc(sum))
+    bind_rows(q15_other) %>% 
+    group_by(PM) %>% 
+    dplyr::summarize(sum = sum(count)) %>% 
+    arrange(desc(sum))
 
 
 ```
