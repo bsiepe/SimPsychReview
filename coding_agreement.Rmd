@@ -141,6 +141,23 @@ agreement_matrix %>%
 ```
 
 
+Descriptive summary:
+```{r}
+agreement_matrix %>% 
+  as.data.frame() %>% 
+  # filter studies where we reviewed different sims for now (so whichsim == TRUE/1)
+  filter(whichsim == 1) %>% 
+  apply(., 2, mean) %>% 
+  as.data.frame() %>% 
+  tibble::rownames_to_column(var = "Question") %>% 
+  rename("Agreement" = ".") %>% 
+  filter(!Question %in% c("whichsim", "doi", "reviewer", 
+                          "pmother_q15", "coding_confidence", "coding_type")) %>% 
+  mutate(Question = factor(Question, levels = Question)) %>%
+  mutate(Question = forcats::fct_rev(Question)) %>% 
+  summary()
+```
+
 
 
 ```{r}
