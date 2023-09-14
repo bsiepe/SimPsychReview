@@ -334,7 +334,7 @@ q15_other <- sim_res_fac %>%
                names_to = NULL,
                values_to = "pmother",
                values_drop_na = TRUE) %>% 
-  select(pmother, journal) %>%
+  dplyr::select(pmother, journal) %>%
   # remove whitespace
   mutate(pmother = str_trim(pmother)) %>% 
   mutate(pmother = str_replace(pmother, ".*correlation.*", "Correlation")) %>%
@@ -390,7 +390,7 @@ sim_res_fac %>%
   mutate(pmother = str_trim(pmother)) %>% 
   # mutate(pmother = str_replace(pmother, ".*bias.*", "bias")) %>% 
   filter(grepl("bias", pmother)) %>% 
-  select(reviewer, pmbias_q15, pmother)
+  dplyr::select(reviewer, pmbias_q15, pmother)
 
 # What is included in "Standard Deviation"?
 sim_res_fac %>% 
@@ -405,7 +405,7 @@ sim_res_fac %>%
   mutate(pmother = str_trim(pmother)) %>% 
   # mutate(pmother = str_replace(pmother, ".*bias.*", "bias")) %>% 
   filter(grepl("standard deviation", pmother)) %>% 
-  select(pmother)
+  dplyr::select(pmother)
 
 
 ## Q16 Is Monte Carlo uncertainty reported anywhere?
@@ -454,7 +454,7 @@ q18a
 
 # add information from software_2_q18 and software_3_q18
 q18b <- sim_res_fac %>% 
-  select(starts_with("software"), journal) %>% 
+  dplyr::select(starts_with("software"), journal) %>% 
   pivot_longer(cols = starts_with("software"),
                names_to = NULL,
                values_to = "software",
@@ -578,8 +578,10 @@ plotList <- lapply(X = list(q2, q4, q6, q7a, q7b, q8, q14,
                              legend.spacing = unit(1.5, "cm")) 
                    })
 names <- LETTERS[1:length(plotList)]
-ggpubr::ggarrange(plotlist = plotList, labels = names,
+fig2 <- ggpubr::ggarrange(plotlist = plotList, labels = names,
                   ncol = 3, nrow = 4, common.legend = TRUE, align = "h")
+ggsave("fig2.pdf", fig2, path = here("figures/"), width = 18, height = 15)
+
 ```
 
 # Descriptives
