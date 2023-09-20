@@ -417,9 +417,39 @@ sim_res_fac %>%
 
 
 ## Q16 Is Monte Carlo uncertainty reported anywhere?
-q16_plot_max <- max(table(sim_res_fac$mcerrors_q16)) + 5
+q16_plot_max <- max(table(sim_res_fac$mcerrors_q16)) + 10
 
-q16 <- sim_res_fac %>% 
+q16 <- sim_res_fac %>%
+  separate_wider_delim(mcerrors_q16, 
+                       delim = ",",
+                       names_sep = "_", 
+                       too_few = "align_start") %>% 
+  pivot_longer(cols = contains("mcerrors"),
+               names_to = NULL,
+               values_to = "mcerrors",
+               values_drop_na = TRUE) %>% 
+  mutate(mcerrors = str_trim(mcerrors)) %>% 
+  mutate(mcerrors = gsub("boxplot", "plot", mcerrors)) %>% 
+  mutate(mcerrors = gsub("quantile plots", "plot", mcerrors)) %>% 
+  mutate(mcerrors = gsub("figures", "plot", mcerrors)) %>% 
+  mutate(mcerrors = gsub("tables", "table", mcerrors)) %>%
+  mutate(mcerrors = as.factor(mcerrors)) %>% 
+  mutate(mcerrors = reorder(mcerrors, mcerrors, length)) %>% 
+  ggplot(aes(x = mcerrors, fill = journal)) +
+    geom_bar() +
+    labs(x = NULL, title ="Is Monte Carlo uncertainty reported anywhere?", fill = "Journal") +
+    scale_fill_manual(values = cols) + 
+    theme(panel.grid.major.y = element_blank()) +
+    scale_y_continuous(limits = c(0, q16_plot_max), expand = c(0,0))+
+    coord_flip()
+q16
+
+
+# Same plot, only yes/no
+q16_yn <- sim_res_fac %>%
+  mutate(mcerrors_q16 = ifelse(mcerrors_q16 == "nowhere",
+                               "no",
+                               "yes")) %>% 
   mutate(mcerrors_q16 = as.factor(mcerrors_q16)) %>% 
   mutate(mcerrors_q16 = reorder(mcerrors_q16, mcerrors_q16, length)) %>% 
   ggplot(aes(x = mcerrors_q16, fill = journal)) +
@@ -429,7 +459,10 @@ q16 <- sim_res_fac %>%
     theme(panel.grid.major.y = element_blank()) +
     scale_y_continuous(limits = c(0, q16_plot_max), expand = c(0,0))+
     coord_flip()
-q16
+q16_yn
+
+
+
 
 ## Q17 In which way are the results reported?
 q17 <- sim_res_fac %>%
@@ -567,8 +600,10 @@ q24
 
 ```{r "fig1", fig.height = 7, fig.width = 10.5, warning=FALSE}
 ## composite plot 1 - problematic questions
-ggpubr::ggarrange(q9, q16, q20, q22, labels = LETTERS[1:4], ncol = 2, nrow = 2,
+fig1 <- ggpubr::ggarrange(q9, q16_yn, q20, q22, labels = LETTERS[1:4], ncol = 2, nrow = 2,
                   common.legend = TRUE, align = "h")
+
+ggsave("fig1.pdf", fig1, path = here("figures/"), width = 10.5, height = 7)
 ```
 
 
