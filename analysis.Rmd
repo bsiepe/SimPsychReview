@@ -439,7 +439,7 @@ q16 <- sim_res_fac %>%
     geom_bar() +
     labs(x = NULL, title ="Is Monte Carlo uncertainty reported anywhere?", fill = "Journal") +
     scale_fill_manual(values = cols) + 
-    theme(panel.grid.major.y = element_blank()) +
+    theme(panel.grid.major.x = element_blank()) +
     scale_y_continuous(limits = c(0, q16_plot_max), expand = c(0,0))+
     coord_flip()
 q16
