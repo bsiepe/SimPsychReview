@@ -219,7 +219,7 @@ q7b <- sim_res_fac %>%
                                     labels = c("fully-\nfactorial",
                                                "one-at-a-\ntime",
                                                "partially-\nfactorial"))) %>% 
-    ggplot(aes(x = dgmfactorial_q7, fill = journal)) +
+    ggplot(aes(x = dgmfactorial_q7, fill = journal)) + 
     geom_bar() +
     labs(x = NULL, y = NULL,
          title ="How are factors varied?", fill = "Journal") +
@@ -366,10 +366,10 @@ q15_other <- sim_res_fac %>%
   # remove whitespace
   mutate(pmother = str_trim(pmother)) %>% 
   mutate(pmother = str_replace(pmother, ".*correlation.*", "Correlation")) %>%
-  mutate(pmother = str_replace(pmother, ".*standard deviation.*", "SD")) %>%
+  # mutate(pmother = str_replace(pmother, ".*standard deviation.*", "SD")) %>%
   mutate(pmother = str_replace(pmother, ".*bias.*", "Bias")) %>%
   mutate(pmother = as.factor(pmother)) %>% 
-  mutate(pmother = forcats::fct_lump_n(pmother, 3)) %>% 
+  mutate(pmother = forcats::fct_lump_n(pmother, 2)) %>% 
   group_by(journal) %>% 
   count(pmother) %>% 
   rename(PM = pmother,
@@ -532,7 +532,7 @@ q18b <- sim_res_fac %>%
   geom_bar() +
   labs(x = NULL, y = NULL, title ="Which software was used?", fill = "Journal") +
   scale_fill_manual(values = cols) + 
-    scale_y_continuous(limits = c(0, q18_plot_max), expand = c(0,0))+
+  scale_y_continuous(limits = c(0, q18_plot_max), expand = c(0,0))+
   theme(panel.grid.major.y = element_blank()) +
   coord_flip()
 q18b
@@ -635,8 +635,8 @@ q24
 plotList1 <- lapply(X = list(q9, q16_yn, q20, q22),
                    ## this plot requires a different title size
                    FUN = function(plot) {
-                       plot +
-    scale_y_continuous(limits = c(0, 105), expand = c(0,0)) +
+                     plot +
+                       scale_y_continuous(limits = c(0, 105), expand = c(0,0)) +
                          theme(axis.text.x = element_text(size = rel(1.2)),
                                plot.title = element_text(size = rel(1.35)),
                                legend.title = element_text(size = rel(1.6)),
