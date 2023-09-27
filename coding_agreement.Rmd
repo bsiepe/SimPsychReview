@@ -145,10 +145,13 @@ agreement_plot <- agreement_matrix %>%
     scale_fill_gradient(high = "darkblue", low = "red") +
     scale_x_continuous(limits = c(0, 1), expand = c(0.01, 0.01), labels = scales::percent) +
     theme(panel.grid.minor = element_blank(),
-          panel.grid.major.y = element_blank())
+          panel.grid.major.y = element_blank(),
+          axis.text.y = element_text(size = rel(0.45)),
+          axis.text.x = element_text(size = rel(0.7)),
+          axis.title = element_text(size = rel(0.9)))
 
 ggsave("agreement_plot.pdf", agreement_plot, path = here("figures/"),
-       device = "pdf", height = 8, width = 1.5*5)
+       device = "pdf", height = 3.5, width = 4)
 
 ```
 
