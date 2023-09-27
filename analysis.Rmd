@@ -211,7 +211,15 @@ q7a
 ## Q7 Fully factorial?
 q7b_plot_max <- max(table(sim_res_fac$dgmfactorial_q7)) + 5
 
-q7b <- ggplot(data = sim_res_fac, aes(x = dgmfactorial_q7, fill = journal)) +
+q7b <- sim_res_fac %>%
+    mutate(dgmfactorial_q7 = factor(dgmfactorial_q7,
+                                    levels = c("fully-factorial",
+                                               "one-at-a-time",
+                                               "partially-factorial"),
+                                    labels = c("fully-\nfactorial",
+                                               "one-at-a-\ntime",
+                                               "partially-\nfactorial"))) %>% 
+    ggplot(aes(x = dgmfactorial_q7, fill = journal)) +
     geom_bar() +
     labs(x = NULL, y = NULL,
          title ="How are factors varied?", fill = "Journal") +
@@ -500,10 +508,12 @@ q17 <- sim_res_fac %>%
 q17
 
 ## Q18 Which software was used to conduct the simulation?
+q18_plot_max <- max(table(sim_res_fac$software_1_q18)) + 10
 q18a <- ggplot(data = sim_res_fac, aes(x = software_1_q18, fill = journal)) +
     geom_bar() +
     labs(x = NULL, y = NULL,
          title ="Which primary software was used?", fill = "Journal") +
+    scale_y_continuous(limits = c(0, q18_plot_max), expand = c(0,0))+
     scale_fill_manual(values = cols) + 
     theme(panel.grid.major.y = element_blank()) +
     coord_flip()
@@ -522,7 +532,7 @@ q18b <- sim_res_fac %>%
   geom_bar() +
   labs(x = NULL, y = NULL, title ="Which software was used?", fill = "Journal") +
   scale_fill_manual(values = cols) + 
-  scale_y_continuous(limits = c(0, 81), expand = c(0,0))+
+    scale_y_continuous(limits = c(0, q18_plot_max), expand = c(0,0))+
   theme(panel.grid.major.y = element_blank()) +
   coord_flip()
 q18b
@@ -575,7 +585,7 @@ sim_res_fac %>%
 q21
 
 ## Q22 Is information on the computational environment provided?
-q22_plot_max <- max(table(sim_res_fac$compenvironment_q22)) + 5
+q22_plot_max <- max(table(sim_res_fac$compenvironment_q22)) + 7
 
 q22 <- sim_res_fac %>%
     mutate(compenvironment_q22 = factor(compenvironment_q22,
@@ -625,11 +635,12 @@ q24
 plotList1 <- lapply(X = list(q9, q16_yn, q20, q22),
                    ## this plot requires a different title size
                    FUN = function(plot) {
-                     plot +
+                       plot +
+    scale_y_continuous(limits = c(0, 105), expand = c(0,0)) +
                          theme(axis.text.x = element_text(size = rel(1.2)),
                                plot.title = element_text(size = rel(1.35)),
                                legend.title = element_text(size = rel(1.6)),
-                               legend.text = element_text(size = rel(1.8)),
+                               legend.text = element_text(size = rel(1.6)),
                                legend.spacing = unit(1.5, "cm")) 
                    })
 fig1 <- ggpubr::ggarrange(plotlist = plotList1, labels = LETTERS[1:4], ncol = 2, nrow = 2,
