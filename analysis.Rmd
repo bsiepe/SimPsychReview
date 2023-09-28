@@ -184,7 +184,7 @@ q5
 ## Q6 How many conditions?
 summary(sim_res_num$nconds_q6)
 breaks <- c(1, 10, 100, 1000, 10000)
-labels <- c("1", "10^1", "10^2", "10^2", "10^4")
+labels <- c("1^phantom(1)", "10^1", "10^2", "10^3", "10^4")
 q6 <- ggplot(data = sim_res_num, aes(x = log(nconds_q6))) +
     geom_histogram(breaks = seq(0, log(10000), 0.5), col = 1, alpha = 0.5) +
     scale_x_continuous(breaks = log(breaks), labels = parse(text = labels)) +
@@ -238,7 +238,7 @@ q7b
 ## Q8 How many repetitions?
 summary(sim_res_num$nsim_q8)
 breaks <- c(1, 10, 100, 1000, 10000, 100000, 1000000)
-labs <- c("1", "10^1", "10^2", "10^3", "10^4", "10^5", "10^6")
+labs <- c("1^phantom(1)", "10^1", "10^2", "10^3", "10^4", "10^5", "10^6")
 q8 <- ggplot(data = sim_res_num, aes(x = log(nsim_q8))) +
     geom_histogram(breaks = seq(0, log(2000000), 0.5), col = 1, alpha = 0.5) +
     labs(x = NULL, y = NULL, 
