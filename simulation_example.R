@@ -1,3 +1,5 @@
+# use `SimDesign::SimFunctions()` to create the template
+
 library(SimDesign)
 
 Design <- createDesign(
@@ -68,15 +70,27 @@ Summarise <- function(condition, results, fixed_objects = NULL) {
   Attach(condition)
   Attach(results)
   
+  EDR_MCSE  <- function(pval) sqrt(EDR(pval) * (1-EDR(pval)) / length(pval))
+  bias_MCSE <- function(est)  var(est) / sqrt(length(est))
+  
   ret <- c(
-    ANCOVA.EDR         = EDR(ANCOVA.pval),
-    ANCOVA.bias        = mean(ANCOVA.est) - treatment_effect,
+    ANCOVA.EDR             = EDR(ANCOVA.pval),
+    ANCOVA.EDR_MCSE        = EDR_MCSE(ANCOVA.pval),
+    ANCOVA.bias            = bias(ANCOVA.est, treatment_effect),
+    ANCOVA.bias_MCSE       = bias_MCSE(ANCOVA.est),
+    ANCOVA.est.var         = var(ANCOVA.est),
     
-    change_score.EDR   = EDR(change_score.pval),
-    change_score.bias  = mean(change_score.est) - treatment_effect,
+    change_score.EDR       = EDR(change_score.pval),
+    change_score.EDR_MCSE  = EDR_MCSE(change_score.pval),
+    change_score.bias      = bias(change_score.est, treatment_effect),
+    change_score.bias_MCSE = bias_MCSE(change_score.est),
+    change_score.est.var   = var(change_score.est),
     
-    post_score.EDR     = EDR(post_score.est),
-    post_score.bias    = mean(post_score.pval) - treatment_effect
+    post_score.EDR         = EDR(post_score.pval),
+    post_score.EDR_MCSE    = EDR_MCSE(post_score.pval),
+    post_score.bias        = bias(post_score.est, treatment_effect),
+    post_score.bias_MCSE   = bias_MCSE(post_score.est),
+    post_score.est.var     = var(post_score.est)
   )
   
   return(ret)
@@ -84,6 +98,15 @@ Summarise <- function(condition, results, fixed_objects = NULL) {
 
 #-------------------------------------------------------------------
 
-res <- runSimulation(design=Design, replications=1000, generate=Generate, 
-                     analyse=Analyse, summarise=Summarise)
-res
+# run pilot to determine power
+res_pilot <- runSimulation(
+  design       = Design,
+  replications = 100,
+  generate     = Generate,
+  analyse      = Analyse,
+  summarise    = Summarise
+)
+
+res_pilot$ANCOVA.est.var       / 0.001^2
+res_pilot$change_score.est.var / 0.001^2
+res_pilot$post_score.est.var   / 0.001^2
