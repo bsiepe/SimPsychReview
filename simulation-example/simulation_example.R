@@ -21,8 +21,8 @@ Generate <- function(condition, fixed_objects = NULL) {
     pre_post_correlation,                    1
   ), nrow = 2, ncol = 2, byrow = TRUE)
   
-  treatment_control      <- MASS::mvrnorm(n = n, mu = c(0, 0),                Sigma = covariance_matrix)
-  treatment_experimental <- MASS::mvrnorm(n = n, mu = c(0, treatment_effect), Sigma = covariance_matrix)
+  treatment_control      <- mvtnorm::rmvnorm(n = n, mean = c(0, 0),                sigma = covariance_matrix)
+  treatment_experimental <- mvtnorm::rmvnorm(n = n, mean = c(0, treatment_effect), sigma = covariance_matrix)
   
   dat <- rbind(
     data.frame(
@@ -70,8 +70,21 @@ Analyse <- function(condition, dat, fixed_objects = NULL) {
 
 Summarise <- function(condition, results, fixed_objects = NULL) {
 
-  Attach(condition)
-  Attach(results)
+  treatment_effect     <- condition[["treatment_effect"]]
+  pre_post_correlation <- condition[["pre_post_correlation"]]
+  n                    <- condition[["n"]]
+  
+  ANCOVA_est    <- results[["ANCOVA_est"]]
+  ANCOVA_est_se <- results[["ANCOVA_est_se"]]
+  ANCOVA_pval   <- results[["ANCOVA_pval"]]
+  
+  change_score_est    <- results[["change_score_est"]]
+  change_score_est_se <- results[["change_score_est_se"]]
+  change_score_pval   <- results[["change_score_pval"]]
+  
+  post_score_est    <- results[["post_score_est"]]
+  post_score_est_se <- results[["post_score_est_se"]]
+  post_score_pval   <- results[["post_score_pval"]]
   
   EDR_MCSE  <- function(pval) sqrt(EDR(pval) * (1 - EDR(pval)) / length(pval))
   bias_MCSE <- function(est)  var(est) / sqrt(length(est))
