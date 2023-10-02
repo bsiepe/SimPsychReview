@@ -87,7 +87,7 @@ Summarise <- function(condition, results, fixed_objects = NULL) {
   post_score_pval   <- results[["post_score_pval"]]
   
   EDR_MCSE  <- function(pval) sqrt(EDR(pval) * (1 - EDR(pval)) / length(pval))
-  bias_MCSE <- function(est)  var(est) / sqrt(length(est))
+  bias_MCSE <- function(est)  sd(est) / sqrt(length(est))
   
   ret <- c(
     ANCOVA_EDR             = EDR(ANCOVA_pval),
@@ -115,6 +115,7 @@ Summarise <- function(condition, results, fixed_objects = NULL) {
 #-------------------------------------------------------------------
 
 # run pilot to determine power
+set.seed(1)
 res_pilot <- runSimulation(
   design       = Design,
   replications = 100,
