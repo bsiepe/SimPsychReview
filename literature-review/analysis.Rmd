@@ -59,8 +59,8 @@ theme_set(theme_bs())
 
 
 ## data
-sim_res_fac_full <- readRDS(file = "data/sim_res_fac.RDS")
-sim_res_num_full <- readRDS(file = "data/sim_res_num.RDS")
+sim_res_fac_full <- readRDS(file = here("data/sim_res_fac.RDS"))
+sim_res_num_full <- readRDS(file = here("data/sim_res_num.RDS"))
 
 # subset assessment only
 sim_res_fac  <- sim_res_fac_full %>%
