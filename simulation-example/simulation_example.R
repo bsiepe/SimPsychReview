@@ -1,20 +1,18 @@
 # use `SimDesign::SimFunctions()` to create the template
-
 library(SimDesign)
 
+# simulation conditions
 Design <- createDesign(
   treatment_effect     = c(0.0, 0.2, 0.5),
-  pre_post_correlation = c(0.0, 0.5, 0.7),
-  n                    = 50
+  pre_post_correlation = c(0.0, 0.5, 0.7)
 )
 
-#-------------------------------------------------------------------
-
+# data generation function
 Generate <- function(condition, fixed_objects = NULL) {
   
   treatment_effect     <- condition[["treatment_effect"]]
   pre_post_correlation <- condition[["pre_post_correlation"]]
-  n                    <- condition[["n"]]
+  n                    <- 50
   
   covariance_matrix <- matrix(c(
     1,                    pre_post_correlation,
@@ -41,6 +39,7 @@ Generate <- function(condition, fixed_objects = NULL) {
   return(dat)
 }
 
+# data analysis function
 Analyse <- function(condition, dat, fixed_objects = NULL) {
   
   ANCOVA       <- lm(post ~ pre + treatment, data = dat)
@@ -68,11 +67,11 @@ Analyse <- function(condition, dat, fixed_objects = NULL) {
   return(ret)
 }
 
+# simulation summary function
 Summarise <- function(condition, results, fixed_objects = NULL) {
 
   treatment_effect     <- condition[["treatment_effect"]]
   pre_post_correlation <- condition[["pre_post_correlation"]]
-  n                    <- condition[["n"]]
   
   ANCOVA_est    <- results[["ANCOVA_est"]]
   ANCOVA_est_se <- results[["ANCOVA_est_se"]]
@@ -112,18 +111,49 @@ Summarise <- function(condition, results, fixed_objects = NULL) {
   return(ret)
 }
 
-#-------------------------------------------------------------------
+## ## run pilot simulation to determine empirical variance of parameter
+## ## estimates to compute required number of repetitions for bias estimation
+## set.seed(1)
+## res_pilot <- runSimulation(
+##   design       = Design,
+##   replications = 100,
+##   generate     = Generate,
+##   analyse      = Analyse,
+##   summarise    = Summarise
+## )
 
-# run pilot to determine power
-set.seed(1)
-res_pilot <- runSimulation(
+## mcse <- 0.005
+## ceiling(max(res_pilot$ANCOVA_est_var)       / mcse^2) # 1986
+## ceiling(max(res_pilot$change_score_est_var) / mcse^2) # 3812
+## ceiling(max(res_pilot$post_score_est_var)   / mcse^2) # 1996
+
+## run full simulation study
+set.seed(42)
+nsim <- 6400 # based on 0.005 MCSE for power of 0.8
+sim_full <- runSimulation(
   design       = Design,
-  replications = 100,
+  replications = nsim,
   generate     = Generate,
   analyse      = Analyse,
-  summarise    = Summarise
+  summarise    = Summarise,
+  parallel = TRUE,
+  save_results = TRUE # save to HD to avoid RAM issues
 )
 
-max(res_pilot$ANCOVA_est_var)       / 0.005^2
-max(res_pilot$change_score_est_var) / 0.005^2
-max(res_pilot$post_score_est_var)   / 0.005^2
+## save sessionInfo
+library(here)
+library(sessioninfo)
+session_info(to_file = here("simulation-example/session-info.txt"),
+             include_base = TRUE, info = "all", dependencies = TRUE)
+
+## save summary data
+write.csv(sim_full, file = "simulation-example/simulation-summaries.csv",
+          row.names = FALSE)
+
+## save full data
+sim_full_results <- SimResults(results = sim_full)
+simdata <- do.call("rbind", lapply(X = sim_full_results, FUN = function(x) {
+    data.frame(x$condition, x$results)
+}))
+write.csv(simdata, file = here("simulation-example/simulation-data.csv"),
+          row.names = FALSE)
