@@ -110,6 +110,6 @@ res_pilot <- runSimulation(
   summarise    = Summarise
 )
 
-res_pilot$ANCOVA_est_var       / 0.005^2
-res_pilot$change_score_est_var / 0.005^2
-res_pilot$post_score_est_var   / 0.005^2
+max(res_pilot$ANCOVA_est_var)       / 0.005^2
+max(res_pilot$change_score_est_var) / 0.005^2
+max(res_pilot$post_score_est_var)   / 0.005^2
