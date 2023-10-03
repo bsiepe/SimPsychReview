@@ -64,6 +64,7 @@ theme_bs <- function(){
     ggplot2::theme(
       legend.position = "top",
       panel.grid.minor = element_blank(),
+      panel.grid.major.x = element_blank(),
       
       # Title and Axis Texts
       plot.title = ggplot2::element_text(size = ggplot2::rel(1.2), hjust = 0.5),
@@ -92,6 +93,7 @@ plot_EDR <- dfl %>%
     ggplot(aes(x = factor(pre_post_correlation), y = EDR,
                group = method,
                ymin = EDR - EDR_MCSE, ymax = EDR + EDR_MCSE)) +
+    geom_vline(xintercept = c(1.5, 2.5), alpha = 0.1) +
     geom_hline(linetype = "dashed", yintercept = 0.05, col = "black", alpha = 0.3, show.legend = FALSE)+
     geom_point(aes(color = method), position = position_dodge(width = 0.7)) +
     geom_errorbar(aes(color = method), position = position_dodge(width = 0.7), width = 0.5) +
@@ -117,6 +119,7 @@ plot_bias <- dfl %>%
     ggplot(aes(x = factor(pre_post_correlation), y = bias,
                group = method,
                ymin = bias - bias_MCSE, ymax = bias + bias_MCSE)) +
+    geom_vline(xintercept = c(1.5, 2.5), alpha = 0.1) +
     geom_hline(linetype = "dashed", yintercept = 0, col = "grey50", show.legend = FALSE)+
     geom_point(aes(color = method), position = position_dodge(width = 0.7)) +
     geom_errorbar(aes(color = method), position = position_dodge(width = 0.7), width = 0.5) +
