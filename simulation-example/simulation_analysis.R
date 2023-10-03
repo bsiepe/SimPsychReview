@@ -4,6 +4,8 @@ library("xtable")
 library("ggplot2")
 library("here")
 library("tidyverse")
+library("scales")
+library("ggpubr")
 
 
 # pivot wide to long
@@ -84,45 +86,49 @@ theme_bs <- function(){
 theme_set(theme_bs())
 
 plot_EDR <- dfl %>% 
-  mutate(method = gsub("change_score", "Change Score", method)) %>% 
-  mutate(method = gsub("post_score", "Post Score", method)) %>% 
-  ggplot(aes(x = treatment_effect, y = EDR, 
-             group = method, 
-             ymin = EDR - EDR_MCSE, ymax = EDR + EDR_MCSE)) + 
-  geom_hline(linetype = "dashed", yintercept = 0, col = "grey50", show.legend = FALSE)+
-  geom_point(aes(color = method), position = position_dodge(width = 0.15)) + 
-  geom_errorbar(aes(color = method), position=position_dodge(width = 0.15)) +
-  # BS: I prefer a factorial scale for x here despite different distances, but preferences vary
-  scale_x_continuous("Treatment effect", breaks = c(0, 0.2, 0.5)) +
-  scale_y_continuous("Power / Type I. error", limits = c(0, 1)) + 
-  facet_wrap(. ~ pre_post_correlation,
-             labeller = label_bquote(rho == .(pre_post_correlation)))+
-  scale_color_manual(values = cols)+
-  labs(group = "Method",
-       color = "Method")
+    mutate(method = gsub("change_score", "Change Score", method)) %>%
+    mutate(method = gsub("post_score", "Post Score", method)) %>%
+    ggplot(aes(x = factor(treatment_effect), y = EDR,
+               group = method,
+               ymin = EDR - EDR_MCSE, ymax = EDR + EDR_MCSE)) +
+    geom_hline(linetype = "dashed", yintercept = 0.05, col = "black", alpha = 0.3, show.legend = FALSE)+
+    geom_point(aes(color = method), position = position_dodge(width = 0.7)) +
+    geom_errorbar(aes(color = method), position = position_dodge(width = 0.7), width = 0.5) +
+    ## geom_point(aes(color = method), position = position_dodge(width = 0.15)) +
+    ## geom_errorbar(aes(color = method), position = position_dodge(width = 0.15)) +
+                                        # BS: I prefer a factorial scale for x here despite different distances, but preferences vary
+    ## scale_x_continuous("Treatment effect", breaks = c(0, 0.2, 0.5)) +
+    scale_x_discrete("Treatment effect") +
+    scale_y_continuous("Power / Type I error rate", limits = c(0, 1),
+                       breaks = c(0, 0.05, 0.25, 0.5, 0.75, 1), labels = scales::percent) +
+    facet_wrap(. ~ pre_post_correlation,
+               labeller = label_bquote(rho == .(pre_post_correlation)))+
+    scale_color_manual(values = cols)+
+    labs(group = "Method", color = "Method")
 plot_EDR
-
 scale <- 0.94
 ggsave("plot_EDR.pdf", plot_EDR, path = here("figures/"), width = scale*10, height = scale*7)
 
 
 plot_bias <- dfl %>% 
-  mutate(method = gsub("change_score", "Change Score", method)) %>% 
-  mutate(method = gsub("post_score", "Post Score", method)) %>% 
-  ggplot(aes(x = treatment_effect, y = bias, 
-             group = method, 
-             ymin = bias - bias_MCSE, ymax = bias + bias_MCSE)) + 
-  geom_hline(linetype = "dashed", yintercept = 0, col = "grey50", show.legend = FALSE)+
-  geom_point(aes(color = method), position = position_dodge(width = 0.15)) + 
-  geom_errorbar(aes(color = method), position=position_dodge(width = 0.15)) +
-  scale_x_continuous("Treatment effect", breaks = c(0, 0.2, 0.5)) +
-  scale_y_continuous("Bias", limits = c(-0.01, 0.01)) + 
-  facet_wrap(. ~ pre_post_correlation,
-             labeller = label_bquote(rho == .(pre_post_correlation)))+
-  scale_color_manual(values = cols)+
-  labs(group = "Method",
-       color = "Method")
+    mutate(method = gsub("change_score", "Change Score", method)) %>%
+    mutate(method = gsub("post_score", "Post Score", method)) %>%
+    ggplot(aes(x = factor(treatment_effect), y = bias,
+               group = method,
+               ymin = bias - bias_MCSE, ymax = bias + bias_MCSE)) +
+    geom_hline(linetype = "dashed", yintercept = 0, col = "grey50", show.legend = FALSE)+
+    geom_point(aes(color = method), position = position_dodge(width = 0.7)) +
+    geom_errorbar(aes(color = method), position = position_dodge(width = 0.7), width = 0.5) +
+    ## scale_x_continuous("Treatment effect", breaks = c(0, 0.2, 0.5)) +
+    scale_x_discrete("Treatment effect") +
+    scale_y_continuous("Bias", limits = c(-0.01, 0.01)) +
+    facet_wrap(. ~ pre_post_correlation,
+               labeller = label_bquote(rho == .(pre_post_correlation)))+
+    scale_color_manual(values = cols)+
+    labs(group = "Method", color = "Method")
 plot_bias
-
 scale <- 0.94
 ggsave("plot_bias.pdf", plot_bias, path = here("figures/"), width = scale*10, height = scale*7)
+
+
+ggarrange(plot_EDR, plot_bias, ncol = 1, common.legend = TRUE)
