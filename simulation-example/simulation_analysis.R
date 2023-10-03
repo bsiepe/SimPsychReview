@@ -2,6 +2,8 @@ df <- read.csv("simulation-example/simulation-summaries.csv")
 
 library("xtable")
 library("ggplot2")
+library("here")
+library("tidyverse")
 
 
 # pivot wide to long
@@ -47,7 +49,7 @@ theme_set(theme_bw() +
                   panel.grid.minor = element_blank()))
 ## pal <- "Harmonic" # change palette here
 ## ## colorspace::hcl_palettes("qualitative", plot = TRUE)
-cols <- c("ANCOVA" = "#E69F00", "change_score" = "#009E73", "post_score" = "#0072B2")
+cols <- c("ANCOVA" = "#E69F00", "Change Score" = "#009E73", "Post Score" = "#0072B2")
 
 # Alternative font
 theme_bs <- function(){
@@ -66,30 +68,61 @@ theme_bs <- function(){
       plot.subtitle = ggplot2::element_text(size = ggplot2::rel(1.1), hjust = 0.5),
       axis.title = ggplot2::element_text(size = ggplot2::rel(1.2)),
       axis.text = ggplot2::element_text(size = ggplot2::rel(1.25)),
-      axis.text.x = ggplot2::element_text(margin = ggplot2::margin(5, b = 10))
+      axis.text.x = ggplot2::element_text(margin = ggplot2::margin(5, b = 10)),
+      
+      # Legen Styling
+      legend.text = ggplot2::element_text(size = rel(1.2)),
+      legend.title = ggplot2::element_text(size = rel(1.2)),
+      
+      # Facetting
+      strip.text = ggplot2::element_text(face = "bold", size = ggplot2::rel(1.2)),
+      # BS: I don't like strip backgrounds, but feel free to uncomment
+      # the following line of you do
+      strip.background = ggplot2::element_rect(fill = NA)
     )
 }
 theme_set(theme_bs())
 
-plot_EDR <- ggplot(dfl, aes(x = treatment_effect, y = EDR, group = method, ymin = EDR - EDR_MCSE, ymax = EDR + EDR_MCSE)) + 
+plot_EDR <- dfl %>% 
+  mutate(method = gsub("change_score", "Change Score", method)) %>% 
+  mutate(method = gsub("post_score", "Post Score", method)) %>% 
+  ggplot(aes(x = treatment_effect, y = EDR, 
+             group = method, 
+             ymin = EDR - EDR_MCSE, ymax = EDR + EDR_MCSE)) + 
+  geom_hline(linetype = "dashed", yintercept = 0, col = "grey50", show.legend = FALSE)+
   geom_point(aes(color = method), position = position_dodge(width = 0.15)) + 
   geom_errorbar(aes(color = method), position=position_dodge(width = 0.15)) +
+  # BS: I prefer a factorial scale for x here despite different distances, but preferences vary
   scale_x_continuous("Treatment effect", breaks = c(0, 0.2, 0.5)) +
   scale_y_continuous("Power / Type I. error", limits = c(0, 1)) + 
-  facet_grid(. ~ pre_post_correlation)
+  facet_wrap(. ~ pre_post_correlation,
+             labeller = label_bquote(rho == .(pre_post_correlation)))+
+  scale_color_manual(values = cols)+
+  labs(group = "Method",
+       color = "Method")
 plot_EDR
 
 scale <- 0.94
-ggsave("plot_EDR.pdf", plot_EDR, path = here("figures/"), width = scale*17, height = scale*10)
+ggsave("plot_EDR.pdf", plot_EDR, path = here("figures/"), width = scale*10, height = scale*7)
 
 
-plot_bias <- ggplot(dfl, aes(x = treatment_effect, y = bias, group = method, ymin = bias - bias_MCSE, ymax = bias + bias_MCSE)) + 
+plot_bias <- dfl %>% 
+  mutate(method = gsub("change_score", "Change Score", method)) %>% 
+  mutate(method = gsub("post_score", "Post Score", method)) %>% 
+  ggplot(aes(x = treatment_effect, y = bias, 
+             group = method, 
+             ymin = bias - bias_MCSE, ymax = bias + bias_MCSE)) + 
+  geom_hline(linetype = "dashed", yintercept = 0, col = "grey50", show.legend = FALSE)+
   geom_point(aes(color = method), position = position_dodge(width = 0.15)) + 
   geom_errorbar(aes(color = method), position=position_dodge(width = 0.15)) +
   scale_x_continuous("Treatment effect", breaks = c(0, 0.2, 0.5)) +
   scale_y_continuous("Bias", limits = c(-0.01, 0.01)) + 
-  facet_grid(. ~ pre_post_correlation)
+  facet_wrap(. ~ pre_post_correlation,
+             labeller = label_bquote(rho == .(pre_post_correlation)))+
+  scale_color_manual(values = cols)+
+  labs(group = "Method",
+       color = "Method")
 plot_bias
 
 scale <- 0.94
-ggsave("plot_bias.pdf", plot_bias, path = here("figures/"), width = scale*17, height = scale*10)
+ggsave("plot_bias.pdf", plot_bias, path = here("figures/"), width = scale*10, height = scale*7)
