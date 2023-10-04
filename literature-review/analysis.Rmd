@@ -677,7 +677,7 @@ ggsave("fig2.pdf", fig2, path = here("figures/"), width = scale*17, height = sca
 ```
 
 # Descriptives
-The following still needs some cleaning.
+Show descriptives grouped by journal, then ungrouped.
 ```{r}
 # detailed per-journal descriptives
 journal_describe <- sim_res_fac %>% 
@@ -722,7 +722,11 @@ sim_res_fac %>%
   mutate(software = as.factor(software)) %>% 
   pivot_longer(cols = any_of(summary_vars),
                names_to = "col", values_to = "response") %>% 
-  select(journal, col, response) %>% 
+  select(doi, journal, col, response) %>% 
+  # get distinct responses per paper %>% 
+  group_by(doi, col) %>% 
+  distinct(response, .keep_all = TRUE) %>% 
+  ungroup() %>% 
   group_by(journal, col) %>% 
   count(response) %>% 
   # filter(!is.na(response)) %>% 
