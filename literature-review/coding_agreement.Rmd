@@ -147,8 +147,8 @@ agreement_plot <- agreement_matrix %>%
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.y = element_blank(),
           axis.text.y = element_text(size = rel(0.45)),
-          axis.text.x = element_text(size = rel(0.7)),
-          axis.title = element_text(size = rel(0.9)))
+          axis.text.x = element_text(size = rel(0.6)),
+          axis.title = element_text(size = rel(0.7)))
 
 ggsave("agreement_plot.pdf", agreement_plot, path = here("figures/"),
        device = "pdf", height = 3.5, width = 4)
