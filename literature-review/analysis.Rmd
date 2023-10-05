@@ -216,9 +216,9 @@ q7b <- sim_res_fac %>%
                                     levels = c("fully-factorial",
                                                "one-at-a-time",
                                                "partially-factorial"),
-                                    labels = c("fully-\nfactorial",
+                                    labels = c("fully\nfactorial",
                                                "one-at-a-\ntime",
-                                               "partially-\nfactorial"))) %>% 
+                                               "partially\nfactorial"))) %>% 
     ggplot(aes(x = dgmfactorial_q7, fill = journal)) + 
     geom_bar() +
     labs(x = NULL, y = NULL,
