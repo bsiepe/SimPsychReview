@@ -158,7 +158,7 @@ q4 <- sim_res_fac %>%
     mutate(dgptype_q4 = reorder(dgptype_q4, dgptype_q4, length, decreasing = TRUE)) %>% 
     ggplot(aes(x = dgptype_q4, fill = journal)) +
     geom_bar() +
-    labs(x = NULL, y = NULL, title ="Type of DGP", fill = "Journal") +
+    labs(x = NULL, y = NULL, title ="Type of data-generating mechanism", fill = "Journal") +
     scale_fill_manual(values = cols) + 
     scale_y_continuous(limits = c(0, q4_plot_max), expand = c(0,0))+
     theme(panel.grid.major.x = element_blank())
