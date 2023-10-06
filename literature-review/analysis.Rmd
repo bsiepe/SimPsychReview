@@ -151,7 +151,8 @@ q4 <- sim_res_fac %>%
                                levels = c("parametric thin-air",
                                           "parametric based on actual data",
                                           "resampled"),
-                               labels = c("parametric \nthin-air",
+                               labels = c("parametric \ncustomized",
+                                        #"parametric \nthin-air",
                                           "parametric \nbased on data",
                                           "resampled"))) %>% 
     mutate(dgptype_q4 = reorder(dgptype_q4, dgptype_q4, length, decreasing = TRUE)) %>% 
