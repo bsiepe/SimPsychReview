@@ -1,5 +1,5 @@
 # SimPsychReview
-This repository contains code and output related to the paper
+This repository contains data, code and output related to the paper
 Siepe, B.S., Bartoš, F., ..., Pawel, S. (2023). Using Simulation Studies for Methodological Research in Psychology. (ADDLINK)
 
 ## Reproducing our results
