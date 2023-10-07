@@ -58,8 +58,10 @@ sim_res$coding_type <- sapply(1:nrow(sim_res), function(i){
 
 
 # Fix data structure -----------------------------------------------------
-# Dateofreview: proper conversion
-sim_res$dateofreview <- as.Date(sim_res$dateofreview)
+# Remove columns not used in the analyses
+sim_res<- sim_res %>% 
+  select(!c(comments, reproducibilitynote, dateofreview, userwrittenquote_q19))
+
 
 # Journal: It is called MBR, not MBRM
 sim_res$journal <- gsub("MBRM", "MBR", sim_res$journal)
@@ -100,6 +102,7 @@ non_factor_vars <- c("year", "issue", "doi", "quoteaims_q3",
 sim_res_fac <- sim_res %>% 
   mutate(across(!contains(non_factor_vars),
          ~as.factor(.)))
+
 
 # Save data
 writexl::write_xlsx(sim_res_fac, path = here("data/sim_res_fac.xlsx"))
