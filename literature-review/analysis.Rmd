@@ -323,7 +323,7 @@ q15a <- sim_res_fac %>%
     mutate(target_q15 = gsub("model selection", "model\nselection", target_q15)) %>% 
     ggplot(aes(x = target_q15, fill = journal)) +
     geom_bar() +
-    labs(x = NULL, y = NULL, title ="What is the aim?", fill = "Journal") +
+    labs(x = NULL, y = NULL, title ="What is the statistical task?", fill = "Journal") +
     scale_fill_manual(values = cols) + 
     scale_y_continuous(limits = c(0, q15_plot_max), expand = c(0,0))+
     theme(panel.grid.major.y = element_blank()) +
@@ -347,7 +347,7 @@ q15a_new <- sim_res_fac %>%
     mutate(target = reorder(target, target, length)) %>% 
     ggplot(aes(x = target, fill = journal)) +
     geom_bar() +
-    labs(x = NULL, y = NULL, title ="What is the aim?", 
+    labs(x = NULL, y = NULL, title ="What is the statistical task?", 
          fill = "Journal") +
     scale_fill_manual(values = cols) + 
     scale_y_continuous(limits = c(0, q15_plot_max + 10), expand = c(0,0))+
