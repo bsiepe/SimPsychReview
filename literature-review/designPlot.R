@@ -47,7 +47,7 @@ df <- rbind(df1, df2, df3)
 ggplot(data = df, aes(x = factor(n), y = factor(p))) +
     facet_wrap(~ type) +
     geom_tile(aes(fill = included), col = 1) +
-    labs(x = "Sample size", y = "Number of variables", fill = "") +
+    labs(x = "Factor 1: Sample size", y = "Factor 2: Number of variables", fill = "") +
     scale_fill_manual(values = c("#009E73")) +
     coord_fixed() +
     theme(panel.grid = element_blank())
