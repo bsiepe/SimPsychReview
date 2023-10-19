@@ -18,3 +18,6 @@ To reproduce our simulation example, refer to the files in the folder `/simulati
 3. `session-info.txt` includes information on packages used and the computational environment.
 
   `/figures/` contains all figures related to both parts of the manuscript. 
+
+## ADEMP-PreReg template
+The preregistration template can be found in another GitHub repository [here](https://github.com/bsiepe/ADEMP-PreReg).
