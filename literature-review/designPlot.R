@@ -13,7 +13,6 @@ theme_bs <- function(){
     ggplot2::theme(
       legend.position = "top",
       panel.grid.minor = element_blank(),
-      panel.grid.major.x = element_blank(),
 
       # Title and Axis Texts
       plot.title = ggplot2::element_text(size = ggplot2::rel(1.2), hjust = 0.5),
@@ -42,7 +41,7 @@ df2 <- df1 %>%
     filter(n >= p) %>%
     mutate(type = "Partially factorial")
 
-df3 <- data.frame(n = c(n,20,20,20), p = c(30, 30, 30, 30, 25, 20,15),
+df3 <- data.frame(n = c(n,40,40,40,40), p = c(15, 15, 15, 15, 15, 20, 25, 30),
  included = "Condition included in study design", type = "One-at-a-time")
 df <- rbind(df1, df2, df3)
 ggplot(data = df, aes(x = factor(n), y = factor(p))) +
@@ -61,9 +60,9 @@ included = "Condition included in study design", type = "Scattershot")
 df <- rbind(df1, df2, df3, df4)
 designPlotFour <- ggplot(data = df, aes(x = factor(n), y = factor(p))) +
   facet_wrap(~ type, nrow = 1) +
-  geom_tile(aes(fill = included), col = 1, width = .9, height = .9) +
+    ##geom_tile(aes(fill = included), col = 1, width = .9, height = .9) +
+    geom_point(aes(fill = included), col = 1, shape = 21, size = 5) +
   labs(x = "Factor 1: Sample size", y = "Factor 2: Number of variables", fill = "") +
   scale_fill_manual(values = c("#009E73")) +
-  coord_fixed() +
-  theme(panel.grid = element_blank())
+  coord_fixed()
 ggsave("designPlotFour.pdf", designPlotFour, path = here("figures/"), width = 8, height = 3.5)
