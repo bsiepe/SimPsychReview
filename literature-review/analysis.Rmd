@@ -10,7 +10,7 @@ output:
 
 # Visualizations
 
-Note BS: I changed the font and suggested an alternative color palette in the plot for Q2. Happy to change back if needed.
+
 ```{r fig.align = "center", fig.height = 5, fig.width = 10}
 ## libraries
 library(dplyr)

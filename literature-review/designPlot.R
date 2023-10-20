@@ -59,11 +59,11 @@ ggsave("designPlot.pdf", path = here("figures/"), width = 8, height = 4)
 df4 <- data.frame(n = n, p = c(15, 25, 30, 20),
 included = "Condition included in study design", type = "Scattershot")
 df <- rbind(df1, df2, df3, df4)
-ggplot(data = df, aes(x = factor(n), y = factor(p))) +
-  facet_wrap(~ type) +
+designPlotFour <- ggplot(data = df, aes(x = factor(n), y = factor(p))) +
+  facet_wrap(~ type, nrow = 1) +
   geom_tile(aes(fill = included), col = 1, width = .9, height = .9) +
   labs(x = "Factor 1: Sample size", y = "Factor 2: Number of variables", fill = "") +
   scale_fill_manual(values = c("#009E73")) +
   coord_fixed() +
   theme(panel.grid = element_blank())
-ggsave("designPlotFour.pdf", path = here("figures/"), width = 8, height = 4)
+ggsave("designPlotFour.pdf", designPlotFour, path = here("figures/"), width = 8, height = 4)
