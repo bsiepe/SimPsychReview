@@ -66,4 +66,4 @@ designPlotFour <- ggplot(data = df, aes(x = factor(n), y = factor(p))) +
   scale_fill_manual(values = c("#009E73")) +
   coord_fixed() +
   theme(panel.grid = element_blank())
-ggsave("designPlotFour.pdf", designPlotFour, path = here("figures/"), width = 8, height = 4)
+ggsave("designPlotFour.pdf", designPlotFour, path = here("figures/"), width = 8, height = 3.5)
