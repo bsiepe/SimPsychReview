@@ -102,7 +102,7 @@ plot_EDR <- dfl %>%
                                         # BS: I prefer a factorial scale for x here despite different distances, but preferences vary
     ## scale_x_continuous("Treatment effect", breaks = c(0, 0.2, 0.5)) +
     scale_x_discrete("Pre-Post Correlation") +
-    scale_y_continuous("Power / Type I error rate", limits = c(0, 1),
+    scale_y_continuous("Rejection Rate (Type I Error Rate / Power)", limits = c(0, 1),
                        breaks = c(0, 0.05, 0.25, 0.5, 0.75, 1), labels = scales::percent) +
     facet_wrap(. ~ treatment_effect)+
     scale_color_manual(values = cols)+
@@ -124,7 +124,7 @@ plot_bias <- dfl %>%
     geom_point(aes(color = method), position = position_dodge(width = 0.7)) +
     geom_errorbar(aes(color = method), position = position_dodge(width = 0.7), width = 0.5) +
     ## scale_x_continuous("Treatment effect", breaks = c(0, 0.2, 0.5)) +
-    scale_x_discrete("Pre-Post-Correlation") +
+    scale_x_discrete("Pre-Post Correlation") +
     scale_y_continuous("Bias", limits = c(-0.01, 0.01)) +
     facet_wrap(. ~ treatment_effect)+
     scale_color_manual(values = cols)+
