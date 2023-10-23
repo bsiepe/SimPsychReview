@@ -27,10 +27,8 @@ sim_res_fac  <- sim_res_fac[sim_res_fac$simstudy_q1 == "yes",]
 # Some cleaning
 sim_res_fac_clean <- sim_res_fac %>% 
   # ignore irrelevant cols
-  select(!c(x1, year, issue, journal, quoteaims_q3, ncondsnotes_q6,
-            nsimjustifiednotes_q9,
-            pmnotes_q15, userwrittenquote_q19, codelink_q20, comments, 
-            reproducibilitynote, dateofreview)) %>% 
+    select(!c(x1, year, issue, journal, quoteaims_q3, ncondsnotes_q6,
+              nsimjustifiednotes_q9, pmnotes_q15, codelink_q20)) %>% 
   # add missing "whichsim"
   mutate(whichsim = ifelse(is.na(whichsim), 1, whichsim)) %>% 
   # remove trailing zero after dot
@@ -141,17 +139,19 @@ agreement_plot <- agreement_matrix %>%
   mutate(Question = factor(Question, levels = Question)) %>%
   mutate(Question = forcats::fct_rev(Question)) %>% 
   ggplot(aes(x = Agreement, y = Question))+
-    geom_bar(stat = "identity", alpha = 0.8, fill = "#08519c") +
+    ## geom_bar(stat = "identity", alpha = 0.8, fill = "#08519c") +
+    geom_segment(aes(xend = 0, yend = Question), alpha = 0.5, size = 0.2) +
+    geom_point(size = 0.5) +
     scale_fill_gradient(high = "darkblue", low = "red") +
     scale_x_continuous(limits = c(0, 1), expand = c(0.01, 0.01), labels = scales::percent) +
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.y = element_blank(),
-          axis.text.y = element_text(size = rel(0.45)),
-          axis.text.x = element_text(size = rel(0.6)),
-          axis.title = element_text(size = rel(0.7)))
+          axis.text.y = element_text(size = rel(0.4)),
+          axis.text.x = element_text(size = rel(0.5)),
+          axis.title = element_text(size = rel(0.55)))
 
 ggsave("agreement_plot.pdf", agreement_plot, path = here("figures/"),
-       device = "pdf", height = 3.5, width = 4)
+       device = "pdf", height = 3, width = 4)
 
 ```
 
