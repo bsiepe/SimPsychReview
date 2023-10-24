@@ -33,8 +33,8 @@ theme_set(theme_bw() +
                 panel.grid.minor = element_blank()))
 ## pal <- "Harmonic" # change palette here
 ## ## colorspace::hcl_palettes("qualitative", plot = TRUE)
-## cols <- c("BRM" = "#E69F00", "MBR" = "#009E73", "PM" = "#0072B2")
-cols <- c("BRM" = "#E69F00", "MBR" = "#56B4E9", "PM" = "#009E73")
+cols <- c("BRM" = "#E69F00", "MBR" = "#009E73", "PM" = "#0072B2")
+# cols <- c("BRM" = "#E69F00", "MBR" = "#56B4E9", "PM" = "#009E73")
 
 # Alternative font
 theme_bs <- function(){
@@ -642,7 +642,7 @@ q24
 plotList1 <- lapply(X = list(q9, q16_yn, q20, q22),
                    ## this plot requires a different title size
                    FUN = function(plot) {
-                     plot +
+                     plot
                        scale_y_continuous(limits = c(0, 105), expand = c(0,0)) +
                          theme(axis.text.x = element_text(size = rel(1.2)),
                                plot.title = element_text(size = rel(1.35)),
