@@ -129,14 +129,14 @@ Summarise <- function(condition, results, fixed_objects = NULL) {
 
 ## run full simulation study
 set.seed(42)
-nsim <- 6400 # based on 0.005 MCSE for power of 0.8
+nsim <- 10000 # based on 0.005 MCSE for power of 0.5
 sim_full <- runSimulation(
   design       = Design,
   replications = nsim,
   generate     = Generate,
   analyse      = Analyse,
   summarise    = Summarise,
-  parallel = TRUE,
+  parallel     = TRUE,
   save_results = TRUE # save to HD to avoid RAM issues
 )
 
