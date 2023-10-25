@@ -1,5 +1,3 @@
-df <- read.csv("simulation-example/simulation-summaries.csv")
-
 library("xtable")
 library("ggplot2")
 library("here")
@@ -7,6 +5,7 @@ library("tidyverse")
 library("scales")
 library("ggpubr")
 
+df <- read.csv(here("simulation-example/simulation-summaries.csv"))
 
 # pivot wide to long
 settings <- c("treatment_effect", "pre_post_correlation")
