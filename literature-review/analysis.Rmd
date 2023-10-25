@@ -223,6 +223,8 @@ q7b <- sim_res_fac %>%
                                     labels = c("fully\nfactorial",
                                                "Scattershot",
                                                "partially/\none-at-a-time"))) %>% 
+    mutate(dgmfactorial_q7 = reorder(dgmfactorial_q7, dgmfactorial_q7, 
+                                     length, decreasing = TRUE)) %>% 
     ggplot(aes(x = dgmfactorial_q7, fill = journal)) + 
     geom_bar(col = 1) +
     labs(x = NULL, y = NULL,

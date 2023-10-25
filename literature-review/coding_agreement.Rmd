@@ -11,16 +11,13 @@ output:
 # Analyses for the appendix
 
 Prepare the data
-TODO:
-- some ambiguity in MC Errors, e.g. "mcerrors_q16 in (https://doi.org/10.3758/s13428-021-01580-y): plot, table vs table and figures" 
-- how to deal with "?" and "+" and so on
 
 ```{r}
 library(tidyverse)
 library(here)
 
 ## data
-sim_res_fac <- readRDS(file = "data/sim_res_fac.RDS")
+sim_res_fac <- readRDS(file = here("data/sim_res_fac.RDS"))
 
 sim_res_fac  <- sim_res_fac[sim_res_fac$simstudy_q1 == "yes",]
 
