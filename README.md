@@ -5,10 +5,9 @@ Siepe, B.S., Bartoš, F., Morris, T.P., Boulesteix, A.-L., Heck, D.W. & Pawel, S
 ## Reproducing our results
 
 To reproduce the results of our literature review, refer to the files in the folder `/literature-review/`:
-1. `data_cleaning.R` is used to clean the raw data.
-2. `analysis.Rmd` contains the main analyses in the paper and code to reproduce all figures.
-3. `coding_agreement.Rmd` contains code to reproduce the agreement analyses in the appendix.
-4. `lit_review_coding.pdf` contains the questions used in the literature review and displayed in the agreement analyses in the appendix. 
+1. `analysis.Rmd` contains the main analyses in the paper and code to reproduce all figures.
+2. `coding_agreement.Rmd` contains code to reproduce the agreement analyses in the appendix.
+3. `lit_review_coding.pdf` contains the questions used in the literature review and displayed in the agreement analyses in the appendix. 
 
 The folder `/data/` contain the raw data used in these scripts.
 
