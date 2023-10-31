@@ -1,6 +1,6 @@
 # SimPsychReview
 This repository contains data, code and output related to the paper
-Siepe, B.S., Bartoš, F., Morris, T.P., Boulesteix, A.-L., Heck, D.W. & Pawel, S. (2023). Simulation Studies for Methodological Research in Psychology: A Standardized Template for Planning, Preregistration, and Reporting (ADDLINK)
+Siepe, B.S., Bartoš, F., Morris, T.P., Boulesteix, A.-L., Heck, D.W. & Pawel, S. (2023). Simulation Studies for Methodological Research in Psychology: A Standardized Template for Planning, Preregistration, and Reporting. doi: [10.31234/osf.io/ufgy6](https://osf.io/preprints/psyarxiv/ufgy6)
 
 ## Reproducing our results
 
