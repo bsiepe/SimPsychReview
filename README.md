@@ -20,4 +20,6 @@ To reproduce our simulation example, refer to the files in the folder `/simulati
   `/figures/` contains all figures related to both parts of the manuscript. 
 
 ## ADEMP-PreReg template
-The preregistration template can be found in another GitHub repository [here](https://github.com/bsiepe/ADEMP-PreReg).
+The ADEMP-PreReg template can be found in another [GitHub repository](https://github.com/bsiepe/ADEMP-PreReg/). Feel free to open an issue or a pull request there to give feedback or suggest improvements.
+
+The version (v.0.1.0) used in the manuscript is archived on [Zenodo](https://zenodo.org/records/10057884).
