@@ -1,5 +1,6 @@
-# use `SimDesign::SimFunctions()` to create the template
 library(SimDesign)
+library(mvtnorm)
+library(here)
 
 # simulation conditions
 Design <- createDesign(
@@ -121,15 +122,19 @@ Summarise <- function(condition, results, fixed_objects = NULL) {
 ##   analyse      = Analyse,
 ##   summarise    = Summarise
 ## )
-
 ## mcse <- 0.005
 ## ceiling(max(res_pilot$ANCOVA_est_var)       / mcse^2) # 1986
 ## ceiling(max(res_pilot$change_score_est_var) / mcse^2) # 3812
 ## ceiling(max(res_pilot$post_score_est_var)   / mcse^2) # 1996
+## nsim <- 3812
+
+## determine number of repetitions to achieve 0.005 MCSE in "worst-case" when
+## the rejection rate is 0.5 (which leads to maximum MCSE for fixed nsim)
+mcse <- 0.005
+nsim <- 0.5^2/mcse^2 # 10000
 
 ## run full simulation study
 set.seed(42)
-nsim <- 10000 # based on 0.005 MCSE for power of 0.5
 sim_full <- runSimulation(
   design       = Design,
   replications = nsim,

@@ -17,7 +17,7 @@ dfl      <- do.call(rbind, lapply(methods, function(method){
   return(temp)
 }))
 
-# makes table
+# Tables
 print_result <- function(est, mcse, decimals = 4){
   sprintf(paste0("%1$.", decimals, "f (%2$.", decimals, "f)"), est, mcse)
 }
@@ -41,15 +41,11 @@ table_bias <- data.frame(
 )
 xtable::xtable(table_bias)
 
-# make figures
-# Sam: I would say facet by correlation, put on x axis the effect size, and then use color for the different methods with position_dodge
-
-# use Bjorn's theme
+# Figures
+# Bjorn's theme
 theme_set(theme_bw() +
             theme(legend.position = "top",
                   panel.grid.minor = element_blank()))
-## pal <- "Harmonic" # change palette here
-## ## colorspace::hcl_palettes("qualitative", plot = TRUE)
 cols <- c("ANCOVA" = "#E69F00", "Change Score" = "#009E73", "Post Score" = "#0072B2")
 
 # Alternative font
@@ -72,14 +68,12 @@ theme_bs <- function(){
       axis.text = ggplot2::element_text(size = ggplot2::rel(1.25)),
       axis.text.x = ggplot2::element_text(margin = ggplot2::margin(5, b = 10)),
       
-      # Legen Styling
+      # Legend Styling
       legend.text = ggplot2::element_text(size = rel(1.2)),
       legend.title = ggplot2::element_text(size = rel(1.2)),
       
       # Facetting
       strip.text = ggplot2::element_text(face = "bold", size = ggplot2::rel(1.2)),
-      # BS: I don't like strip backgrounds, but feel free to uncomment
-      # the following line of you do
       strip.background = ggplot2::element_rect(fill = NA)
     )
 }
@@ -96,10 +90,6 @@ plot_EDR <- dfl %>%
     geom_hline(linetype = "dashed", yintercept = 0.05, col = "black", alpha = 0.3, show.legend = FALSE)+
     geom_point(aes(color = method), position = position_dodge(width = 0.7)) +
     geom_errorbar(aes(color = method), position = position_dodge(width = 0.7), width = 0.5) +
-    ## geom_point(aes(color = method), position = position_dodge(width = 0.15)) +
-    ## geom_errorbar(aes(color = method), position = position_dodge(width = 0.15)) +
-                                        # BS: I prefer a factorial scale for x here despite different distances, but preferences vary
-    ## scale_x_continuous("Treatment effect", breaks = c(0, 0.2, 0.5)) +
     scale_x_discrete("Pre-Post Correlation") +
     scale_y_continuous("Rejection Rate (Type I Error Rate / Power)", limits = c(0, 1),
                        breaks = c(0, 0.05, 0.25, 0.5, 0.75, 1), labels = scales::percent) +
@@ -122,7 +112,6 @@ plot_bias <- dfl %>%
     geom_hline(linetype = "dashed", yintercept = 0, col = "grey50", show.legend = FALSE)+
     geom_point(aes(color = method), position = position_dodge(width = 0.7)) +
     geom_errorbar(aes(color = method), position = position_dodge(width = 0.7), width = 0.5) +
-    ## scale_x_continuous("Treatment effect", breaks = c(0, 0.2, 0.5)) +
     scale_x_discrete("Pre-Post Correlation") +
     scale_y_continuous("Bias", limits = c(-0.01, 0.01)) +
     facet_wrap(. ~ treatment_effect)+
@@ -135,6 +124,5 @@ ggsave("plot_bias.pdf", plot_bias, path = here("figures/"), width = scale*10, he
 
 plot_sim_combined <- ggarrange(plot_EDR, plot_bias, ncol = 1,
                                common.legend = TRUE, align = "v")
-
 ggsave("plot_sim_combined.pdf", plot_sim_combined, path = here("figures/"), width = scale*10, height = scale*10)
 
