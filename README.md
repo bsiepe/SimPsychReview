@@ -26,7 +26,7 @@ Siepe, B.S., Bartoš, F., Morris, T.P., Boulesteix, A.-L., Heck, D.W. & Pawel, S
 <!--                   "sysfonts")) -->
 <!-- ``` -->
 
-* To rerun the simulation via a Docker container, refer to the files
+* To rerun the simulation example via a Docker container, refer to the files:
   1. `./Dockerfile` Dockerfile to recreate the computational environment used in the simulation study
   2. `./Makefile` Makefile to conveniently build and run the Docker analysis: Make sure to have Docker and Make installed, then run `make docker` from the root directory of this git repository. This will install all necessary dependencies. RStudio Server can then be opened from a browser (<http://localhost:8787>), and the R scripts in `/simulation-example/` can be rerun. 
 
