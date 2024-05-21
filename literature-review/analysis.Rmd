@@ -260,7 +260,7 @@ q9_plot_max <- max(table(sim_res_fac$nsimjustified_q9)) + 5
 q9 <- ggplot(data = sim_res_fac, aes(x = nsimjustified_q9, fill = journal)) +
     geom_bar(col = 1) +
     labs(x = NULL, y = NULL,
-         title = "Are the number of repetitions justified?", fill = "Journal") +
+         title = "Are the number of repetitions explicitly justified?", fill = "Journal") +
     scale_fill_manual(values = cols) + 
     scale_y_continuous(limits = c(0, q9_plot_max), expand = c(0,0))+
     theme(panel.grid.major.x = element_blank())
