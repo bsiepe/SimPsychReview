@@ -817,7 +817,6 @@ sim_res_fac %>%
     dplyr::summarize(sum = sum(count)) %>% 
     arrange(desc(sum))
 
-
 ```
 
 
