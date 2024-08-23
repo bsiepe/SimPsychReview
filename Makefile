@@ -2,12 +2,12 @@ all: docker
 
 FILE=simpsych-example
 
-## build docker image (requires root access for docker)
+## build docker image (requires root rights for docker)
 dbuild: Dockerfile
 	docker build \
     -t $(FILE) .
 
-## run docker image that produces *pdf* from within docker
+## run docker
 docker: dbuild
 	echo "open RStudio Server at http://localhost:8787"
 	docker run \
